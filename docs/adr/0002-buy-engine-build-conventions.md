@@ -22,5 +22,16 @@ subscription (rate-limited) but prohibit extracting OAuth tokens into a custom c
 - One mature engine, maintained by someone else; we maintain policy.
 - Composio is fleet-first, so **competitive best-of-N is manual** (same task, agent overridden;
   a human picks/merges) — acceptable, since best-of-N is the ~10% case (ADR-0004).
-- Cursor CLI is beta = the flakiest worker; the engine degrades gracefully if a worker errors.
+- Cursor CLI was beta at time of writing (the flakiest worker); the engine degrades gracefully if a
+  worker errors. **Superseded for the default implementer — see Update (2026-06) below.**
 - If Composio is ever swapped out, the backbone (ADR-0001) and these conventions are unaffected.
+
+## Update (2026-06) — Cursor Composer is the default solo implementer
+The latest Cursor Composer (driven via `cursor-agent`) has matured past the beta-era flakiness noted
+above and is now the **default solo implementer** (`agent: cursor` in each repo's
+`agent-orchestrator.yaml`). Rationale: in the operator's runs the latest Composer is reliable enough
+for the routine ~90% path (ADR-0004), and its tendency toward small, surgical diffs matches this
+project's reward function — *"reward the smallest passing diff, not cleverness."* `claude` and `codex`
+remain first-class and are the natural overrides for competitive best-of-N (`templates/ROLES.md`);
+graceful degradation on worker error is unchanged. This sets the *recommended* default only — the
+actual pin still lives per-repo in `agent-orchestrator.yaml`.
