@@ -1,5 +1,13 @@
 {
   "name": "agentic-workflow",
-  "owner": { "name": "Pierre Supau" },
-  "plugins": [ { "name": "agentic-workflow", "source": "." } ]
+  "owner": {
+    "name": "Pierre Supau"
+  },
+  "plugins": [
+    {
+      "name": "agentic-workflow",
+      "source": "."
+    }
+  ],
+  "description": "Agentic-coding conventions, decisions (ADRs), and process — a Claude Code plugin that rides on the Composio orchestrator."
 }
