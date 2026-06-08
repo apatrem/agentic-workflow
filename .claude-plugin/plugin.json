@@ -1,8 +1,8 @@
 {
-  "name": "agent-orchestrator",
-  "version": "0.1.0",
-  "description": "Competitive multi-agent orchestration. Fan a task out to Claude/Codex/Cursor in isolated git worktrees, synthesize the best result, gate it on frozen tests plus an independent cross-lineage review, then auto-merge to main or flag a human. Engine is repo-agnostic; per-repo specifics live in orchestrator.config.ts.",
+  "name": "agentic-workflow",
+  "version": "0.2.0",
+  "description": "A conventions + decisions + process pack for agentic coding. It rides on top of an external orchestrator (Composio) — it does NOT implement one. Backbone: AGENTS.md + tests/CI + git/PR. Ships grill-me planning, a task template, baseline repo conventions, and the decision record (ADRs).",
   "author": "Pierre Supau",
   "commands": "./commands",
-  "keywords": ["orchestration", "multi-agent", "worktrees", "best-of-n", "ci"]
+  "keywords": ["agentic-coding", "conventions", "agents.md", "grill-me", "adr", "composio"]
 }

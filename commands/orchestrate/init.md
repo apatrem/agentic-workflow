@@ -1,18 +1,14 @@
 ---
-description: Scaffold orchestration into the current repo (config, tasks dir, git rules)
+description: Scaffold the baseline agentic-coding conventions into the current repo
 ---
 
 # /orchestrate:init
 
-Set up the current repo to use agent-orchestrator. Do **not** overwrite existing files; report and skip.
+Set the current repo up to follow the workflow (ADR-0009). Do **not** overwrite existing files; report and skip.
 
-1. Copy `templates/orchestrator.config.ts` to the repo root. Infer sensible defaults:
-   - `gate`: detect the stack (package.json scripts / Makefile) and assemble build+lint+test+typecheck.
-   - `protectedPaths`: pre-fill with `.github/**`, lockfiles, build/test config, `tests/**`, and any
-     obvious contract files (schemas, public API, migrations). Ask the user to confirm.
-   - `diffBudget`: default `{ files: 25, lines: 1000 }`.
-   - `agents` / `synthesizer` / `reviewer` / `prescreen`: the official-CLI defaults.
-2. Create `tasks/` with `templates/task.template.md` copied in as `tasks/EXAMPLE.md`.
-3. Append `templates/AGENT_RULES.md` into `CLAUDE.md` and `AGENTS.md` (create if absent).
-4. Verify prerequisites are installed + logged in: `claude`, `codex`, `cursor-agent`, `gh`. Report any missing.
-5. Print next steps: run `/orchestrate:architect`, then `/orchestrate:plan`, then `/orchestrate:run`.
+1. **`AGENTS.md`** from `templates/AGENTS.template.md` — fill the overview, the **one gate command**, the forbidden/protected paths, and the review checklist. (If `AGENTS.md` exists, just check it has those sections.)
+2. thin **`CLAUDE.md`** (`templates/CLAUDE.template.md`) + **`.cursor/rules/conventions.mdc`** (`templates/cursor-conventions.mdc`) — both point to AGENTS.md.
+3. **`tasks/`** + `templates/task.template.md`.
+4. **`.pre-commit-config.yaml`** from `templates/pre-commit-config.yaml`; tell the user to run `pipx install pre-commit && pre-commit install`.
+5. **CI + protected main:** ensure a CI workflow runs the gate; print the `gh api … /branches/main/protection` command to require the check + a PR (human merges).
+6. Point the user to `docs/WORKFLOW.md`. **Engine setup is separate** (Composio): `npm install -g @aoagents/ao`, then `ao start`.

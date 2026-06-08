@@ -15,6 +15,6 @@ For each task, emit `tasks/<id>-<slug>.md` from `templates/task.template.md` wit
 - metadata: `risk` (low|high), `mode` (solo default | competitive), `depends-on`, `parallel-safe`.
 
 Default `mode: solo`; promote to `competitive` only for high-uncertainty / high-value tasks.
-Add any new contract files to `protectedPaths` in `orchestrator.config.ts`.
+Add any new contract files to the forbidden/protected list in `AGENTS.md`.
 
 Output: committed `tasks/*.md` + frozen (red) tests. The human reviews and approves before `/orchestrate:run`.

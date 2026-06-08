@@ -1,22 +1,23 @@
-# Task <id> — <short title>
+# T-000: <title>
 
-<!-- Phase 2 emits one of these per task; a human signs off before any run. -->
+<!-- Output of a /grill-me session. One unit of work, small enough to review. -->
 
-## Goal
-<One paragraph. What and why. No implementation prescription — that's the point of fanning out.>
+## Objective
+<what + why, one short paragraph — no implementation prescription>
 
-## Acceptance criteria (FROZEN TESTS)
-<!-- These MUST map to a runnable, committed test. If acceptance cannot be expressed
-     as a test, the task is `risk: high` and is NOT auto-merge eligible. -->
-- [ ] <criterion> → covered by `tests/<file>::<name>` (committed red before fan-out)
-- [ ] <criterion> → covered by `tests/<file>::<name>`
-- [ ] Existing gate stays green.
+## Acceptance criteria  (must be machine-checkable)
+- [ ] <criterion> → covered by `tests/<file>`
+- [ ] gate green: `<the repo's one gate command>`
 
-## Do not change
-- <protected contract / file / API this task must not touch>
+## Files likely involved
+- <path>
 
-## Metadata
-- `risk: low`            # low → auto-merge eligible; high → always human
-- `mode: solo`           # solo (1 worker, default) | competitive (3 workers + synth + review)
-- `depends-on: []`       # task ids that must be merged first (dependents skipped if a dep is unmerged)
-- `parallel-safe: false` # true only if file set is disjoint from sibling tasks in the batch
+## Out of scope
+- <explicit non-goals>
+
+## Risks / do-not-touch
+- <protected contract this task must not change>
+
+## Meta
+- mode: solo            # solo (default) | competitive (only for hard / ambiguous / risky)
+- size budget: < 300 changed lines (split or stack if larger)
