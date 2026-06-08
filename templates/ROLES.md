@@ -8,4 +8,4 @@ Give each agent a slightly different bias so they don't converge on the same mis
 
 Shared rules: smallest correct change; don't touch protected paths or the frozen tests (you may *add* tests); run the gate before finishing.
 
-> Worker orchestration is handled by Composio (ADR-0011). This file is *guidance*, not harness wiring.
+> Worker orchestration is handled by Composio (ADR-0002). This file is *guidance*, not harness wiring.
