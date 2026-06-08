@@ -1,16 +1,21 @@
 {
   "name": "agentic-workflow",
   "version": "0.2.1",
-  "description": "A conventions + decisions + process pack for agentic coding. It rides on top of an external orchestrator (Composio) — it does NOT implement one. Backbone: AGENTS.md + tests/CI + git/PR. Ships grill-me planning, a task template, baseline repo conventions, and the decision record (ADRs).",
+  "description": "A conventions + decisions + process pack for agentic coding. It rides on top of an external orchestrator (Composio) — it does NOT implement one. Backbone: AGENTS.md + tests/CI + git/PR. Ships grill-me / grill-with-docs planning skills, a task template, baseline repo conventions, and the decision record (ADRs).",
   "author": {
     "name": "Pierre Supau"
   },
   "commands": "./commands",
+  "skills": [
+    "./skills/grill-me",
+    "./skills/grill-with-docs"
+  ],
   "keywords": [
     "agentic-coding",
     "conventions",
     "agents.md",
     "grill-me",
+    "grill-with-docs",
     "adr",
     "composio"
   ]
