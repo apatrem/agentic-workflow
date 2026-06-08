@@ -1,0 +1,8 @@
+{
+  "name": "agent-orchestrator",
+  "version": "0.1.0",
+  "description": "Competitive multi-agent orchestration. Fan a task out to Claude/Codex/Cursor in isolated git worktrees, synthesize the best result, gate it on frozen tests plus an independent cross-lineage review, then auto-merge to main or flag a human. Engine is repo-agnostic; per-repo specifics live in orchestrator.config.ts.",
+  "author": "Pierre Supau",
+  "commands": "./commands",
+  "keywords": ["orchestration", "multi-agent", "worktrees", "best-of-n", "ci"]
+}
