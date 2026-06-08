@@ -2,7 +2,7 @@
 description: Phase 1 — establish architecture & ADRs via an interactive grilling session
 ---
 
-# /orchestrate:architect
+# /agentic-workflow:architect
 
 Single agent + human. **Never fans out.** Produce the contracts that make Phase 3 safe.
 

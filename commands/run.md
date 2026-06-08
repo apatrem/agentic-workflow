@@ -3,7 +3,7 @@ description: Phase 3 — run a task via the Composio engine (ao); a human merges
 argument-hint: "[tasks/<id>.md]"
 ---
 
-# /orchestrate:run
+# /agentic-workflow:run
 
 The engine is **Composio (`ao`)**, not a bespoke harness (ADR-0011). This command preps and hands off.
 

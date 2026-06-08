@@ -9,7 +9,7 @@ ability to fix the engine once for everyone.
 ## Decision
 **Packaging:** ship as a **Claude Code plugin** (engine, versioned centrally) driven by a single
 committed **`orchestrator.config.ts`** per repo. Engine = harness + role prompts + decision rule +
-conventions + the four `/orchestrate:*` commands + a scaffolder. Per-repo = config + ADRs/CONTEXT +
+conventions + the four `/agentic-workflow:*` commands + a scaffolder. Per-repo = config + ADRs/CONTEXT +
 tasks + the frozen tests. **Zero engine code copied per repo → no drift.** (Not a template repo, not
 copied scripts, not a standalone CLI — those undermine central improvement or contradict ADR-0006.)
 

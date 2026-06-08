@@ -2,7 +2,7 @@
 description: Scaffold the baseline agentic-coding conventions into the current repo
 ---
 
-# /orchestrate:init
+# /agentic-workflow:init
 
 Set the current repo up to follow the workflow (ADR-0009). Do **not** overwrite existing files; report and skip.
 

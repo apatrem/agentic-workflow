@@ -8,10 +8,10 @@ A reusable Claude Code plugin: the **conventions, planning, and decisions** for 
 The orchestration engine (fan out a task to Claude/Codex/Cursor in worktrees, run them, open PRs) is **[Composio](https://github.com/ComposioHQ/agent-orchestrator) (`@aoagents/ao`)** — a mature external tool driven on your subscriptions. This pack is the *operating manual + scaffolder* that sits on top of it. (See ADR-0011 for why buy-the-engine / build-the-policy.)
 
 ## What it gives you
-- **`/orchestrate:init`** — scaffold the baseline conventions into any repo.
-- **`/orchestrate:architect`** — Phase 1: grill-me → ADRs + CONTEXT.
-- **`/orchestrate:plan`** — Phase 2: tasks with acceptance tests, `risk`, `mode`.
-- **`/orchestrate:run`** — Phase 3: drive Composio; human merges.
+- **`/agentic-workflow:init`** — scaffold the baseline conventions into any repo.
+- **`/agentic-workflow:architect`** — Phase 1: grill-me → ADRs + CONTEXT.
+- **`/agentic-workflow:plan`** — Phase 2: tasks with acceptance tests, `risk`, `mode`.
+- **`/agentic-workflow:run`** — Phase 3: drive Composio; human merges.
 - **`docs/adr/*`** — the decision record (the durable asset).
 - **`docs/WORKFLOW.md`** — the one-page model.
 - **`templates/`** — AGENTS.md, pre-commit, CLAUDE/.cursor, task template, agent biases.
