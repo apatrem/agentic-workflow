@@ -1,0 +1,18 @@
+{
+  "//": "Minimal Node project skeleton for the scaffold. Copy to repo root as package.json and fill in. The pack standardises on pnpm via Corepack — `packageManager` below pins it so every clone/worktree/CI uses the same pnpm. Do NOT also commit a package-lock.json or yarn.lock; commit pnpm-lock.yaml.",
+  "name": "<project>",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.4.1",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "echo 'TODO: build' && exit 1",
+    "lint": "echo 'TODO: lint' && exit 1",
+    "test": "echo 'TODO: test' && exit 1",
+    "validate": "echo 'TODO: typecheck/validate' && exit 1",
+    "gate": "pnpm run build && pnpm run lint && pnpm test && pnpm run validate"
+  }
+}
