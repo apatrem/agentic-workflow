@@ -52,7 +52,7 @@ one-line, swappable detail.
   OSS) and **macOS-only** today. **Auth:** the control plane logs in via OAuth device-code / API key
   (`superset auth login`); the *agents* run the underlying CLIs (a preset is a stored command run in a
   terminal), so they use **the CLI's own subscription login** — the no-token-extraction constraint above
-  holds. Confirm on first run that spawning `claude` / `cursor-agent` doesn't demand a provider API key.
+  holds. *Confirmed (2026-06): spawning `claude` / `cursor-agent` uses the existing CLI login, no provider API key.*
 - **ADR-0008 is *not* blocked by the engine.** The headless CLI/SDK gives the spawn + gate primitives an
   auto-merge loop needs (`superset agents create`; `superset terminals create --command <gate>`); what
   remains is ADR-0008's own code-side decision + `gh` merge. (An earlier draft wrongly called an interactive
