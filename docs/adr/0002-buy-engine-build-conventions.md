@@ -38,20 +38,25 @@ one-line, swappable detail.
   own git worktree; first-class **Cursor** support (the Cursor-Composer solo default below carries over),
   plus Claude / Codex / OpenCode / Amp. Zero token markup. The orchestrator runs **no LLM**, which removes
   the token-overhead concern.
-- **Posture shift:** Composio was *automated / headless*; Superset is *interactive* — **the human drives the
-  loop** (session → implement → gate → review diff → PR). This only deepens human-merge (ADR-0003) and
-  fail-to-human (ADR-0006). Best-of-N (the `hard` tier, ADR-0004) gets *better*: N parallel sessions, compare
-  diffs, pick.
-- **Mechanism:** the Composio `agent-orchestrator.yaml` / `worker.agent` (and `ao spawn` for reviews) is
-  gone; the worker/reviewer agent is chosen per session in Superset. The Cursor-Composer-default *preference*
-  stands.
-- **Caveats (recorded, not blocking — solo / local / macOS):** Superset is **Elastic License 2.0**
-  (source-available, not OSS); **macOS-only** today; **auth unverified** — gate before trusting it: confirm
-  it launches `cursor-agent` / `claude` on **subscription login, not API keys** (the constraint above). If it
-  forces API keys, swap it out.
-- **Consequence for ADR-0008:** an *interactive* engine has no headless loop, so it **cannot** serve the
-  autonomous auto-merge tier — that tier now needs a future *automated* engine and stays inert until one
-  exists.
+- **Two surfaces — interactive *and* headless.** Superset is both a macOS app **and** a **CLI / TypeScript
+  SDK / MCP server** ([docs.superset.sh](https://docs.superset.sh)). So an **orchestrator can spawn workers
+  programmatically** — a script (or an AI orchestrator via the MCP server) runs `superset workspaces create`
+  then `superset agents create --workspace … --agent <model> --prompt <task>`, putting each worker with the
+  right model in its own worktree, **no human opening windows**. That was the original reason to have an
+  engine; Superset keeps it. A human still merges by default (ADR-0003 / 0006). Best-of-N (`hard`, ADR-0004):
+  spawn N agents across lineages, compare diffs, pick.
+- **Mechanism:** the Composio `agent-orchestrator.yaml` / `ao spawn` is gone; pick the worker/reviewer model
+  via `--agent <preset>` (`superset agents create`) or per session in the GUI. The Cursor-Composer-default
+  *preference* stands.
+- **Caveats (recorded — solo / local / macOS):** Superset is **Elastic License 2.0** (source-available, not
+  OSS) and **macOS-only** today. **Auth:** the control plane logs in via OAuth device-code / API key
+  (`superset auth login`); the *agents* run the underlying CLIs (a preset is a stored command run in a
+  terminal), so they use **the CLI's own subscription login** — the no-token-extraction constraint above
+  holds. Confirm on first run that spawning `claude` / `cursor-agent` doesn't demand a provider API key.
+- **ADR-0008 is *not* blocked by the engine.** The headless CLI/SDK gives the spawn + gate primitives an
+  auto-merge loop needs (`superset agents create`; `superset terminals create --command <gate>`); what
+  remains is ADR-0008's own code-side decision + `gh` merge. (An earlier draft wrongly called an interactive
+  engine a dead-end here.)
 - **Fallbacks (one-line swap):** **Claude Squad** (minimal TUI, more battle-tested); **Sculptor**
   (Docker-container isolation, stronger than worktrees — ADR-0006).
 

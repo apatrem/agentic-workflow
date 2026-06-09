@@ -1,0 +1,5 @@
+{
+  "//": "Copy to a repo root as .superset/config.json (committed, per-repo). Superset runs `setup` once in EACH new workspace (git worktree) right after it is created, and `teardown` on delete. Env available to the scripts: SUPERSET_WORKSPACE_NAME, SUPERSET_ROOT_PATH. Use setup to bootstrap deps fast per worktree — pnpm hardlinks from its single global store, so a worktree costs ~no extra disk instead of a full node_modules copy. Adapt the command to THIS repo's package manager; verify key names against Superset's current config schema (Settings → workspace scripts).",
+  "setup": "corepack enable && pnpm install --frozen-lockfile",
+  "teardown": ""
+}

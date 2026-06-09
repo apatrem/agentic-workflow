@@ -17,8 +17,8 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
 1. **Pre-flight:** the PR's CI gate is **green** (don't pay tokens to review red code — WORKFLOW.md);
    `gh` authed; the CLIs (`claude` / `codex`) logged in on subscription. Note the PR number/URL.
 
-2. **Reviewer A — GPT-5.5 @ xhigh (Codex lineage).** Run **codex** (a Superset Codex session, or `codex`
-   directly) with the prompt:
+2. **Reviewer A — GPT-5.5 @ xhigh (Codex lineage).** Spawn it —
+   `superset agents create --workspace ws_… --agent codex --prompt` (or run `codex` directly) — with:
    ```
    Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
@@ -28,8 +28,8 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    Effort is pinned in `~/.codex/config.toml` → `model_reasoning_effort = "xhigh"` (Codex reads its effort
    from there, not a flag — confirm it before running).
 
-3. **Reviewer B — Opus 4.8 @ extra-high (Claude lineage).** Run **claude** (a Superset Claude session, or
-   `claude` directly) with the prompt:
+3. **Reviewer B — Opus 4.8 @ extra-high (Claude lineage).** Spawn it —
+   `superset agents create --workspace ws_… --agent claude --prompt` (or run `claude` directly) — with:
    ```
    ultrathink. Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked

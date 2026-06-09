@@ -20,7 +20,7 @@ One dial, two axes (authoring depth × review rigor); set per task, default `low
 - **Advanced (earned, opt-in per repo):** autonomous auto-merge — only after real CI required-checks + a Narrow→Widen rollout. Until then, **humans merge.**
 
 ## Engine
-Orchestration (worktree sessions, run agents, review diffs) = **Superset** — an interactive macOS manager driving your subscription CLIs (ADR-0002 Update). This pack does not implement an engine. **You drive the loop; a human merges.** `hard`'s best-of-N runs as N parallel sessions; `medium`/`hard`'s dual review runs the reviewer CLIs (pinned models — see `/agentic-workflow:review`). The engine is a *pluggable slot* — swap Superset for another interactive manager (e.g. Claude Squad) in one line.
+Orchestration (worktree sessions, run agents, review diffs) = **Superset** (ADR-0002 Update) — a macOS app *and* a headless **CLI / SDK / MCP server** driving your subscription CLIs. This pack does not implement an engine. Spawn workers interactively (GUI) **or** programmatically — `superset workspaces create` + `superset agents create --agent <model> --prompt <task>` puts each worker with the right model in its own worktree; **a human merges** by default. `hard`'s best-of-N = N spawned agents across lineages; `medium`/`hard`'s dual review spawns the reviewer CLIs (pinned models — see `/agentic-workflow:review`). The engine is a *pluggable slot* — swap in another manager (e.g. Claude Squad) in one line.
 
 ## Rituals
 1. **Grill before code** — ambiguity dies in /grill-me, not in the PR.
