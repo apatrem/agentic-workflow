@@ -16,7 +16,12 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
 > against **superset v0.2.19** — re-check on upgrade.
 
 1. **Pre-flight:** `main` clean + protected; the agent CLIs (`claude` / `codex` / `cursor-agent`) logged in on
-   your subscription; `gh` authed; the task's `depends-on` already merged. Register the repo once:
+   your subscription **and each engine preset set to run non-interactively** — a preset is a stored command
+   (ADR-0002), and it must carry its CLI's auto-approve flag or the worker blocks on the first approval prompt
+   and the spawn never returns. Flags (verify against each CLI's `--help`; external/versioned per ADR-0002):
+   **cursor `--force`** (alias `--yolo`) — the default `low` implementer, so this one matters most; **claude
+   `--dangerously-skip-permissions`**; **codex `--dangerously-bypass-approvals-and-sandbox`**. Then `gh` authed;
+   the task's `depends-on` already merged. Register the repo once:
    `superset projects create --local --clone <url>` (returns a `prj_…` id).
 2. **Spawn the worker(s)** per the task's **`mode`** (ADR-0004) — each gets its own worktree + the right model.
    Create-and-spawn in one call:
