@@ -54,7 +54,8 @@ one-line, swappable detail.
   terminal), so they use **the CLI's own subscription login** — the no-token-extraction constraint above
   holds. *Confirmed (2026-06): spawning `claude` / `cursor-agent` uses the existing CLI login, no provider API key.*
 - **ADR-0008 is *not* blocked by the engine.** The headless CLI/SDK gives the spawn + gate primitives an
-  auto-merge loop needs (`superset agents create`; `superset terminals create --command <gate>`); what
+  auto-merge loop needs (`superset workspaces create … --agent … --prompt …`;
+  `superset terminals create --command <gate>`); what
   remains is ADR-0008's own code-side decision + `gh` merge. (An earlier draft wrongly called an interactive
   engine a dead-end here.)
 - **Fallbacks (one-line swap):** **Claude Squad** (minimal TUI, more battle-tested); **Sculptor**

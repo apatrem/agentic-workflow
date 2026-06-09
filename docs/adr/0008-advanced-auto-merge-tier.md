@@ -58,7 +58,7 @@ and tighten the gate if a bad change ever lands.**
 - The full autonomous design is preserved intact and available, but **quarantined behind an explicit
   opt-in**; turning it on is a deliberate graduation, not a default.
 - Trust in autonomy grows on evidence, not assumption.
-- **Engine note:** Superset (ADR-0002 Update) exposes a **headless CLI/SDK** — `superset agents create` to
-  spawn workers and `superset terminals create --command <gate>` to run the gate — so the spawn/gate
-  primitives this tier needs already exist. What remains is *this* ADR's code-side decision + `gh` merge; the
-  engine is no longer the blocker.
+- **Engine note:** Superset (ADR-0002 Update) exposes a **headless CLI/SDK** — worker spawn is
+  `superset workspaces create … --agent … --prompt …`, and the gate runs via
+  `superset terminals create --command <gate>` — so the spawn/gate primitives this tier needs already exist.
+  What remains is *this* ADR's code-side decision + `gh` merge; the engine is no longer the blocker.
