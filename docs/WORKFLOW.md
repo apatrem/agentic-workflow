@@ -7,7 +7,7 @@
 idea → **/grill-me** → `tasks/T-xxx.md` (acceptance = tests; `mode: low|medium|hard`) → *(codegraph maps blast radius)* → implement in an isolated worktree → gate green → small PR → review per tier (blockers only; `medium`/`hard` add the dual review) → **human merges** → recurring mistake → a test/lint/rule.
 
 ## Effort/review dial — `mode: low | medium | hard` (default `low`; prefer low, justify higher)
-One dial, two axes (authoring depth × review rigor); set per task, repo default in `agent-orchestrator.yaml` (ADR-0004).
+One dial, two axes (authoring depth × review rigor); set per task, default `low` (ADR-0004).
 - **low** *(default, ~90%)* — 1 implementer + deterministic gate + 1 adversarial reviewer.
 - **medium** — 1 implementer + gate + an independent **dual review** on every PR: **GPT-5.5 @ xhigh** (codex) **and** **Opus 4.8 @ ultrathink** (claude-code), each posts a PR comment; orchestrator synthesizes (agreements / disagreements / deduped severity-ranked punch-list). Blockers-only veto. → `/agentic-workflow:review`.
 - **hard** — competitive best-of-N across lineages → **smart-merge** (an Opus 4.8 synthesizer grafts the best attempts into one diff) → **then the medium dual review** on that result (**hard ⊇ medium**).
@@ -20,7 +20,7 @@ One dial, two axes (authoring depth × review rigor); set per task, repo default
 - **Advanced (earned, opt-in per repo):** autonomous auto-merge — only after real CI required-checks + a Narrow→Widen rollout. Until then, **humans merge.**
 
 ## Engine
-Orchestration (fan-out worktrees, run agents, open PRs) = **Composio (`ao`)**, driven on subscriptions. This pack does not implement an engine. `hard`'s best-of-N + smart-merge and `medium`/`hard`'s dual review are driven via `ao spawn` (pinned models — see `/agentic-workflow:review`); a human picks/merges.
+Orchestration (worktree sessions, run agents, review diffs) = **Superset** — an interactive macOS manager driving your subscription CLIs (ADR-0002 Update). This pack does not implement an engine. **You drive the loop; a human merges.** `hard`'s best-of-N runs as N parallel sessions; `medium`/`hard`'s dual review runs the reviewer CLIs (pinned models — see `/agentic-workflow:review`). The engine is a *pluggable slot* — swap Superset for another interactive manager (e.g. Claude Squad) in one line.
 
 ## Rituals
 1. **Grill before code** — ambiguity dies in /grill-me, not in the PR.

@@ -5,7 +5,7 @@ The durable decision record for this plugin. Read top to bottom — each is self
 | # | Decision |
 |---|----------|
 | [0001](0001-backbone.md) | The backbone is `AGENTS.md` + tests/CI + git/PR — not the orchestrator |
-| [0002](0002-buy-engine-build-conventions.md) | Buy the engine (Composio); build only the conventions/policy |
+| [0002](0002-buy-engine-build-conventions.md) | Use an external engine (Composio → Superset, amended 2026-06); build only the conventions/policy |
 | [0003](0003-human-merge-baseline.md) | Human-merge is the baseline; auto-merge is an earned, opt-in tier |
 | [0004](0004-effort-solo-default.md) | Effort/review dial: three tiers (`low | medium | hard`), default `low`; prefer low, justify higher |
 | [0005](0005-three-phases-human-signoff.md) | Three phases; humans gate planning; competition only in implementation |

@@ -58,3 +58,6 @@ and tighten the gate if a bad change ever lands.**
 - The full autonomous design is preserved intact and available, but **quarantined behind an explicit
   opt-in**; turning it on is a deliberate graduation, not a default.
 - Trust in autonomy grows on evidence, not assumption.
+- **Engine note:** the current engine is an *interactive* manager (Superset, ADR-0002 Update), which does
+  **not** serve this tier — it has no headless auto-merge loop. This tier needs a future *automated* engine;
+  until one exists it stays inert even if a repo opts in.

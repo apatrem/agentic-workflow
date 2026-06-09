@@ -17,7 +17,7 @@ into one named tier so a task author turns a single knob.
 
 ## Decision
 Effort is a **per-task dial, `mode: low | medium | hard`, default `low`**, set in the task
-frontmatter (`tasks/*.md`), with a **repo default** in `agent-orchestrator.yaml`. It is a cost↔assurance
+frontmatter (`tasks/*.md`), defaulting to `low`. It is a cost↔assurance
 ladder; the rule is **prefer `low`, justify higher** — promote a task only when its risk/ambiguity/value
 warrants the extra spend, and say why in the task.
 
@@ -33,8 +33,8 @@ The two axes bundled into the one dial:
   reviewer. The routine ~90% path.
 - **medium** — one implementer + gate, then a **dual review on every PR**: two independent reviewers of
   different lineage each post a PR comment —
-  - **GPT-5.5 at `xhigh`** via `ao spawn --agent codex` (effort comes from `~/.codex/config.toml` `model_reasoning_effort = "xhigh"`), and
-  - **Claude Opus 4.8 at extra-high** via `ao spawn --agent claude-code` (instructed to `ultrathink`).
+  - **GPT-5.5 at `xhigh`** via the **codex** CLI (effort comes from `~/.codex/config.toml` `model_reasoning_effort = "xhigh"`), and
+  - **Claude Opus 4.8 at extra-high** via the **claude** CLI (instructed to `ultrathink`).
 
   The orchestrator then **synthesizes both** into one verdict: agreements, disagreements, and a
   deduped, severity-ranked punch-list. **Veto is blockers-only** (correctness / security /
@@ -63,5 +63,5 @@ it wastes the vendor diversity.
   separately.
 - The effort dial and the auto-merge tier (ADR-0008) are independent: any tier can run under the
   human-merge baseline (ADR-0003) or, once a repo has earned it, under auto-merge.
-- Under Composio, `hard`'s best-of-N and the dual review are driven via `ao spawn` (see
-  `commands/review.md` for the pinned reviewer models/effort); a human still merges by default.
+- Under Superset, `hard`'s best-of-N runs as N parallel sessions and the dual review runs the reviewer
+  CLIs (see `commands/review.md` for the pinned models/effort); a human still merges by default.

@@ -2,8 +2,7 @@
 # CI is where the gate becomes binding (ADR-0001): this is the required check on
 # a protected main, so `main` only moves on a PR with a green gate.
 # Standardised on pnpm via Corepack — the SAME package manager workers use in
-# their worktrees (see agent-orchestrator.template.yaml postCreate), so local,
-# worktree, and CI installs are identical and reproducible.
+# their worktrees, so local, worktree, and CI installs are identical and reproducible.
 name: CI
 on:
   pull_request:
