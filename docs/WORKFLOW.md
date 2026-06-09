@@ -4,10 +4,15 @@
 *LLMs propose. Tools verify. Git isolates. CI decides. Humans merge. Rules remember.*
 
 ## The loop
-idea → **/grill-me** → `tasks/T-xxx.md` (acceptance = tests) → *(codegraph maps blast radius)* → implement in an isolated worktree → gate green → small PR → sparse review (blockers only) → **human merges** → recurring mistake → a test/lint/rule.
+idea → **/grill-me** → `tasks/T-xxx.md` (acceptance = tests; `mode: low|medium|hard`) → *(codegraph maps blast radius)* → implement in an isolated worktree → gate green → small PR → review per tier (blockers only; `medium`/`hard` add the dual review) → **human merges** → recurring mistake → a test/lint/rule.
 
-## Default mode = solo
-One implementer + deterministic gate + one adversarial reviewer. Reserve **competitive best-of-N** for hard / ambiguous / risky / security tasks (~10%). Set per task: `mode: solo | competitive`.
+## Effort/review dial — `mode: low | medium | hard` (default `low`; prefer low, justify higher)
+One dial, two axes (authoring depth × review rigor); set per task, repo default in `agent-orchestrator.yaml` (ADR-0004).
+- **low** *(default, ~90%)* — 1 implementer + deterministic gate + 1 adversarial reviewer.
+- **medium** — 1 implementer + gate + an independent **dual review** on every PR: **GPT-5.5 @ xhigh** (codex) **and** **Opus 4.8 @ ultrathink** (claude-code), each posts a PR comment; orchestrator synthesizes (agreements / disagreements / deduped severity-ranked punch-list). Blockers-only veto. → `/agentic-workflow:review`.
+- **hard** — competitive best-of-N across lineages → **smart-merge** (an Opus 4.8 synthesizer grafts the best attempts into one diff) → **then the medium dual review** on that result (**hard ⊇ medium**).
+
+**smart-merge ≠ auto-merge:** smart-merge synthesizes N attempts into one diff; the PR **merge stays human** by default (ADR-0003). Auto-merge is the separate, orthogonal advanced tier (ADR-0008) — `hard` does *not* imply it.
 
 ## Tiers — add complexity only when a trigger fires
 - **Baseline (always):** AGENTS.md, thin CLAUDE.md/.cursor rules, task template, the gate + CI required check + protected main, pre-commit, the rituals below. *Recommended:* codegraph + code-review-graph (navigation, **not proof**).
@@ -15,7 +20,7 @@ One implementer + deterministic gate + one adversarial reviewer. Reserve **compe
 - **Advanced (earned, opt-in per repo):** autonomous auto-merge — only after real CI required-checks + a Narrow→Widen rollout. Until then, **humans merge.**
 
 ## Engine
-Orchestration (fan-out worktrees, run agents, open PRs) = **Composio (`ao`)**, driven on subscriptions. This pack does not implement an engine. Best-of-N in Composio is **manual** (same task, agent overridden); a human picks/merges.
+Orchestration (fan-out worktrees, run agents, open PRs) = **Composio (`ao`)**, driven on subscriptions. This pack does not implement an engine. `hard`'s best-of-N + smart-merge and `medium`/`hard`'s dual review are driven via `ao spawn` (pinned models — see `/agentic-workflow:review`); a human picks/merges.
 
 ## Rituals
 1. **Grill before code** — ambiguity dies in /grill-me, not in the PR.

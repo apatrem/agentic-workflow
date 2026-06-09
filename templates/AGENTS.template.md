@@ -18,7 +18,8 @@
 ## Workflow
 - Work in your own worktree on `agent/<tool>/<task>`; **never commit to `main`** (protected — PR + green CI).
 - Small PRs (< 300 lines routine; split/stack larger).
-- Ship via PR → sparse review (blockers only) → **a human merges**.
+- **Effort/review tier** per task: `mode: low | medium | hard` (default `low`; prefer low, justify higher — ADR-0004). `medium`/`hard` add an independent dual review on the PR; `hard` also runs competitive best-of-N + an Opus smart-merge first.
+- Ship via PR → review per tier (blockers only) → **a human merges** (smart-merge ≠ auto-merge; ADR-0003).
 
 ## Review checklist
 - Correctness · security · test coverage · backward-compat · unnecessary complexity.
