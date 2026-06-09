@@ -4,7 +4,7 @@
 <what this repo is, in 2–3 sentences>
 
 ## Commands
-- **Package manager:** pnpm via Corepack (`corepack enable`); install with `pnpm install --frozen-lockfile`. Commit `pnpm-lock.yaml` only — not `package-lock.json` / `yarn.lock`. (Node repos.)
+- **Package manager:** pnpm via Corepack (`corepack enable`); install with `pnpm install --frozen-lockfile`. Commit `pnpm-lock.yaml` only — not `package-lock.json` / `yarn.lock`. (Default for Node repos — ADR-0009.)
 - **Gate (one command):** `<pnpm run build && pnpm run lint && pnpm test && pnpm run validate>`  ← the bar; CI runs exactly this
 - Install / dev / format: <…>
 
