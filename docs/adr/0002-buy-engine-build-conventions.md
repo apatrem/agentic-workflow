@@ -14,7 +14,7 @@ subscription (rate-limited) but prohibit extracting OAuth tokens into a custom c
 - **Engine = Composio (`@aoagents/ao`)** — it drives the official Claude / Codex / Cursor CLIs on
   subscription auth, isolates each worker in its own worktree, and opens PRs. **Never token
   extraction.** **Engine pick superseded — see Update (engine, 2026-06) below.**
-- This pack ships only the **conventions, planning (grill-me), task template, and ADRs** — the
+- This pack ships only the **conventions, planning (grill-with-docs), task template, and ADRs** — the
   operating manual and scaffolder that sit on top of the engine.
 - **Merge vehicle = a PR**, never `git push HEAD:main`. CI re-runs the gate in the canonical
   environment; **the PR is both the merge vehicle and the human handoff**.
