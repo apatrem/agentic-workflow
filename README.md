@@ -12,6 +12,7 @@ The orchestration engine (fan out a task to Claude/Codex/Cursor in worktrees, ru
 - **`/agentic-workflow:architect`** — Phase 1: grill-me → ADRs + CONTEXT.
 - **`/agentic-workflow:plan`** — Phase 2: tasks with acceptance tests, `risk`, `mode`.
 - **`/agentic-workflow:run`** — Phase 3: drive Composio; human merges.
+- **`/agentic-workflow:review`** — the `medium`-tier dual review on a PR (GPT-5.5 xhigh + Opus 4.8 ultrathink → synthesis).
 - **`docs/adr/*`** — the decision record (the durable asset).
 - **`docs/WORKFLOW.md`** — the one-page model.
 - **`templates/`** — AGENTS.md, pre-commit, CLAUDE/.cursor, task template, agent biases.
@@ -20,7 +21,7 @@ The orchestration engine (fan out a task to Claude/Codex/Cursor in worktrees, ru
 **Engine = Composio (external). Policy/conventions = this plugin. Per-repo specifics = committed in the repo** (`AGENTS.md`, the gate, `tasks/`, ADRs). Nothing engine-level is copied per repo, so there is no drift.
 
 ## Default posture
-Solo implementer + deterministic gate + one adversarial reviewer; **humans merge.** Competitive best-of-N and autonomous auto-merge are *opt-in tiers* you graduate into (ADR-0003), not the default.
+A per-task **effort/review dial — `mode: low | medium | hard`, default `low`** (prefer low, justify higher; ADR-0004). `low` = one implementer + deterministic gate + one adversarial reviewer. `medium` adds an independent dual review on every PR (GPT-5.5 xhigh + Opus 4.8 ultrathink, synthesized). `hard` adds competitive best-of-N + an Opus **smart-merge** (synthesize N attempts → one diff), then the medium dual review (**hard ⊇ medium**). **Humans merge** at every tier — **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate, orthogonal opt-in tier you graduate into (ADR-0003/0008), not implied by `hard`.
 
 ## Requirements
 Claude Code · the official CLIs logged in on your subs (`claude`, `codex`, `cursor-agent`) · `gh` · Composio (`@aoagents/ao`) for the engine.
