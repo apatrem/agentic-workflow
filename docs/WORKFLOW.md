@@ -4,7 +4,7 @@
 *LLMs propose. Tools verify. Git isolates. CI decides. Humans merge. Rules remember.*
 
 ## The loop
-idea → **/grill-me** → `tasks/T-xxx.md` (acceptance = tests; `mode: low|medium|hard`) → *(codegraph maps blast radius)* → implement in an isolated worktree → gate green → small PR → review per tier (blockers only; `medium`/`hard` add the dual review) → **human merges** → recurring mistake → a test/lint/rule.
+idea → **`/agentic-workflow:architect`** (grill-with-docs → ADRs + `CONTEXT.md`; human signs each ADR) → **`/agentic-workflow:plan`** (`tasks/T-xxx.md` + frozen red tests; human sign-off) → *(codegraph maps blast radius)* → **`/agentic-workflow:run`** (implement in an isolated worktree) → gate green → small PR → review per tier (blockers only; `medium`/`hard` add the dual review) → **human merges** → recurring mistake → a test/lint/rule.
 
 ## Effort/review dial — `mode: low | medium | hard` (default `low`; prefer low, justify higher)
 One dial, two axes (authoring depth × review rigor); set per task, default `low` (ADR-0004).
@@ -20,10 +20,10 @@ One dial, two axes (authoring depth × review rigor); set per task, default `low
 - **Advanced (earned, opt-in per repo):** autonomous auto-merge — only after real CI required-checks + a Narrow→Widen rollout. Until then, **humans merge.**
 
 ## Engine
-Orchestration (worktree sessions, run agents, review diffs) = **Superset** (ADR-0002 Update) — a macOS app *and* a headless **CLI / SDK / MCP server** driving your subscription CLIs. This pack does not implement an engine. Spawn workers interactively (GUI) **or** programmatically — `superset workspaces create` + `superset agents create --agent <model> --prompt <task>` puts each worker with the right model in its own worktree; **a human merges** by default. `hard`'s best-of-N = N spawned agents across lineages; `medium`/`hard`'s dual review spawns the reviewer CLIs (pinned models — see `/agentic-workflow:review`). The engine is a *pluggable slot* — swap in another manager (e.g. Claude Squad) in one line.
+Orchestration (worktree sessions, run agents, review diffs) = **Superset** (ADR-0002 Update) — a macOS app *and* a headless **CLI / SDK / MCP server** driving your subscription CLIs (bundled at `~/.superset/bin/superset`). This pack does not implement an engine. Spawn workers interactively (GUI) **or** programmatically — `superset workspaces create … --agent <lineage> --prompt <task>` puts each worker with the right model in its own worktree (see `/agentic-workflow:run`; re-check `superset --help` on upgrade); use `superset agents create --workspace …` to run agents in an *existing* workspace (e.g. PR reviewers). **A human merges** by default. `hard`'s best-of-N = N spawned agents across lineages; `medium`/`hard`'s dual review spawns the reviewer CLIs (pinned models — see `/agentic-workflow:review`). The engine is a *pluggable slot* — swap in another manager (e.g. Claude Squad) in one line.
 
 ## Rituals
-1. **Grill before code** — ambiguity dies in /grill-me, not in the PR.
+1. **Grill before code** — ambiguity dies in Phase 1 (`/agentic-workflow:architect`), not in the PR.
 2. **Deterministic gate before any AI review** — don't pay tokens to review red code.
 3. **Small-PR budget** — routine < 300 lines; split/stack larger; separate mechanical from behavioural.
 4. **Sparse review** — blockers only, ≤10 findings, ranked. AI review is an assistant, not a merge authority (it catches ~15–31% of issues).

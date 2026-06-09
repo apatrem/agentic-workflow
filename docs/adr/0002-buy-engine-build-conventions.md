@@ -39,15 +39,15 @@ one-line, swappable detail.
   plus Claude / Codex / OpenCode / Amp. Zero token markup. The orchestrator runs **no LLM**, which removes
   the token-overhead concern.
 - **Two surfaces — interactive *and* headless.** Superset is both a macOS app **and** a **CLI / TypeScript
-  SDK / MCP server** ([docs.superset.sh](https://docs.superset.sh)). So an **orchestrator can spawn workers
-  programmatically** — a script (or an AI orchestrator via the MCP server) runs `superset workspaces create`
-  then `superset agents create --workspace … --agent <model> --prompt <task>`, putting each worker with the
-  right model in its own worktree, **no human opening windows**. That was the original reason to have an
-  engine; Superset keeps it. A human still merges by default (ADR-0003 / 0006). Best-of-N (`hard`, ADR-0004):
-  spawn N agents across lineages, compare diffs, pick.
-- **Mechanism:** the Composio `agent-orchestrator.yaml` / `ao spawn` is gone; pick the worker/reviewer model
-  via `--agent <preset>` (`superset agents create`) or per session in the GUI. The Cursor-Composer-default
-  *preference* stands.
+  SDK / MCP server** ([docs.superset.sh](https://docs.superset.sh); CLI bundled at `~/.superset/bin/superset`).
+  An operator can spawn workers programmatically — via MCP (preferred) or the CLI — with a one-shot
+  `superset workspaces create … --agent <lineage> --prompt <task>` (verified v0.2.19; re-check on upgrade),
+  putting each worker with the right model in its own worktree. Use `superset agents create --workspace …`
+  to run an agent in an *existing* workspace (e.g. PR reviewers). A human still merges by default
+  (ADR-0003 / 0006). Best-of-N (`hard`, ADR-0004): spawn N agents across lineages, compare diffs, pick.
+- **Mechanism:** the Composio `agent-orchestrator.yaml` / `ao spawn` wiring is gone; pick the worker/reviewer
+  model via `--agent <preset>` on spawn (CLI/GUI) or per session in the GUI. The Cursor-Composer-default
+  *preference* stands (see Update below).
 - **Caveats (recorded — solo / local / macOS):** Superset is **Elastic License 2.0** (source-available, not
   OSS) and **macOS-only** today. **Auth:** the control plane logs in via OAuth device-code / API key
   (`superset auth login`); the *agents* run the underlying CLIs (a preset is a stored command run in a
@@ -61,17 +61,11 @@ one-line, swappable detail.
   (Docker-container isolation, stronger than worktrees — ADR-0006).
 
 ## Update (2026-06) — Cursor Composer is the default solo implementer
-> *Mechanism superseded by the engine Update above:* under Superset the agent is picked **per session**,
-> not via `agent-orchestrator.yaml` / `worker.agent`. The **preference** (Cursor Composer as the default
-> solo implementer) recorded below still holds.
 
-The latest Cursor Composer (driven via `cursor-agent`) has matured past the beta-era flakiness noted
-above and is now the **default solo implementer** — set as the *worker* agent
-(`worker.agent: cursor`) in each repo's `agent-orchestrator.yaml`, which overrides the flat `agent`
-for worker sessions only and leaves the separate **orchestrator** role (typically `claude-code`)
-untouched. Rationale: in the operator's runs the latest Composer is reliable enough
-for the routine ~90% path (ADR-0004), and its tendency toward small, surgical diffs matches this
-project's reward function — *"reward the smallest passing diff, not cleverness."* `claude` and `codex`
-remain first-class and are the natural overrides for competitive best-of-N (`templates/ROLES.md`);
-graceful degradation on worker error is unchanged. This sets the *recommended* default only — the
-actual pin still lives per-repo in `agent-orchestrator.yaml`.
+Under Superset the agent is picked **per spawn or session** (`--agent cursor` / Cursor Composer in the GUI) —
+not via a repo-level harness config. The latest Cursor Composer (driven via `cursor-agent`) has matured past
+the beta-era flakiness noted above and is the **default solo implementer** for `mode: low` (ADR-0004): one
+worker on lineage **cursor**, routine ~90% path. Rationale: reliable enough in practice, and its tendency
+toward small, surgical diffs matches the reward function — *"reward the smallest passing diff, not
+cleverness."* `claude` and `codex` remain first-class overrides for competitive best-of-N (`templates/ROLES.md`);
+graceful degradation on worker error is unchanged.

@@ -29,7 +29,7 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    - **`low`** *(default)* — one worker, lineage **cursor** (Cursor Composer) + the gate + one adversarial reviewer.
    - **`medium`** — one worker, then the dual review on the PR → `/agentic-workflow:review`.
    - **`hard`** — repeat the spawn **2–3×** on the **same** task, one per lineage (`--agent claude` / `codex` /
-     `cursor`; bias each per `templates/ROLES.md`), then **smart-merge** the best into one diff (Opus 4.8), then
+     `cursor`; bias each per `docs/ROLES.md`), then **smart-merge** the best into one diff (Opus 4.8), then
      the medium dual review (**hard ⊇ medium**).
 
    (GUI equivalent: `⌘N` new workspace → run the agent in its terminal.)
@@ -37,6 +37,10 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    `superset terminals create --workspace <ws> --command "<gate>"` — and review the diff (GUI `⌘L`, or open the
    worktree in your editor). For `hard`, compare attempts side-by-side and synthesize the smallest correct diff —
    reward the smallest passing diff, not cleverness.
+   - **`low`** — one **adversarial reviewer** (blockers-only, ≤10 ranked findings): spawn via
+     `superset agents create --workspace <ws> --agent claude --prompt "…"` (or review the diff yourself) and post
+     as a PR comment; nits are advisory.
+   - **`medium`** / post-**`hard`** smart-merge — run `/agentic-workflow:review` (dual cross-lineage review).
 4. Push the chosen branch; open a PR via `gh` → CI re-runs the gate → review per tier (blockers only) → **a
    human merges**. **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate advanced tier
    (ADR-0003 / 0008).
