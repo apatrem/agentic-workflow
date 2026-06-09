@@ -1,0 +1,27 @@
+# Copy to a repo root as `.github/workflows/ci.yml`.
+# CI is where the gate becomes binding (ADR-0001): this is the required check on
+# a protected main, so `main` only moves on a PR with a green gate.
+# Standardised on pnpm via Corepack — the SAME package manager workers use in
+# their worktrees (see agent-orchestrator.template.yaml postCreate), so local,
+# worktree, and CI installs are identical and reproducible.
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable Corepack (pins pnpm from package.json "packageManager")
+        run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install (reproducible)
+        run: pnpm install --frozen-lockfile
+      # THE GATE — keep this identical to AGENTS.md's one gate command.
+      - name: Gate (build · lint · test · validate)
+        run: pnpm run build && pnpm run lint && pnpm test && pnpm run validate
