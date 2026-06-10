@@ -1,5 +1,5 @@
 ---
-description: Run the `medium` dual review on a PR — GPT-5.5 (xhigh) + Opus 4.8 (ultrathink), then synthesize
+description: Run the `medium` dual review on a PR — GPT-5.5 (xhigh) + Claude Fable 5 (effort high), then synthesize
 argument-hint: "[<pr-number-or-url>]"
 ---
 
@@ -28,15 +28,19 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    Effort is pinned in `~/.codex/config.toml` → `model_reasoning_effort = "xhigh"` (Codex reads its effort
    from there, not a flag — confirm it before running).
 
-3. **Reviewer B — Opus 4.8 @ extra-high (Claude lineage).** Spawn it —
-   `superset agents create --workspace ws_… --agent claude --prompt` (or run `claude` directly) — with:
+3. **Reviewer B — Claude Fable 5 @ effort `high` (Claude lineage).** Spawn it —
+   `superset agents create --workspace ws_… --agent claude --prompt` (or run
+   `claude --model claude-fable-5 --effort high` directly) — with:
    ```
-   ultrathink. Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
+   Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
    advisory. Post your review as a PR comment prefixed
-   '### Review — Claude Opus 4.8 (claude-code, ultrathink)' via: gh pr comment <pr> --body-file <file>.
+   '### Review — Claude Fable 5 (claude-code, effort high)' via: gh pr comment <pr> --body-file <file>.
    ```
-   The leading `ultrathink` is what pins Claude to extra-high reasoning.
+   Model/effort are pinned by **CLI flags** — `--model claude-fable-5 --effort high` (valid efforts:
+   `low|medium|high|xhigh|max`; verify with `claude --help`). A Superset preset is one stored command — if
+   yours can't carry these flags for this role, run the CLI directly. **Fallback:** if Fable is unavailable,
+   use the latest Opus (≥4.8) at `high`–`xhigh` and reflect the actual model/effort in the comment prefix.
 
 4. **Synthesize (orchestrator).** Once both PR comments are posted, read both and produce one **synthesis**
    comment prefixed `### Dual-review synthesis`:
@@ -48,5 +52,5 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
 5. **Hand back to the human.** The synthesis informs the author and the human merger; **the human merges**
    (ADR-0003). Auto-merge is the separate advanced tier (ADR-0008) — not triggered here.
 
-> For a `hard` task: run `/agentic-workflow:run` to do the competitive best-of-N + Opus smart-merge
+> For a `hard` task: run `/agentic-workflow:run` to do the competitive best-of-N + smart-merge (Fable 5 @ xhigh)
 > (synthesize N attempts → one diff), open the PR, **then run this command** on that PR.

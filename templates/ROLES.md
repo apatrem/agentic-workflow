@@ -4,7 +4,8 @@ Give each agent a slightly different bias so they don't converge on the same mis
 
 > **Solo default:** the routine ~90% path (`mode: low`) runs one implementer — the **Cursor Composer** agent by default, the agent you select for the session in Superset (ADR-0002 Update, ADR-0004). The biases below apply only to **`hard`** competitive best-of-N, where you override the agent per lineage.
 
-- **claude** — the cleanest, most readable implementation.
+- **claude** — the cleanest, most readable implementation. Pin **Fable 5 @ effort `high`**
+  (`--model claude-fable-5 --effort high`; latest Opus ≥4.8 at high–xhigh as fallback — ADR-0004 Update).
 - **codex** — the most test-driven (red → green; cover each acceptance criterion).
 - **cursor** — the smallest diff (fewest files/lines; no new abstractions).
 

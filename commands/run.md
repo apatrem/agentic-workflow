@@ -20,8 +20,10 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    (ADR-0002), and it must carry its CLI's auto-approve flag or the worker blocks on the first approval prompt
    and the spawn never returns. Flags (verify against each CLI's `--help`; external/versioned per ADR-0002):
    **cursor `--force`** (alias `--yolo`) — the default `low` implementer, so this one matters most; **claude
-   `--dangerously-skip-permissions`**; **codex `--dangerously-bypass-approvals-and-sandbox`**. Then `gh` authed;
-   the task's `depends-on` already merged. Register the repo once:
+   `--dangerously-skip-permissions`**; **codex `--dangerously-bypass-approvals-and-sandbox`**. The claude
+   preset should also pin the model: `--model claude-fable-5` (Claude-lineage roles are **Fable-first**;
+   effort varies per role, so pass `--effort` per spawn or run the CLI directly — see each step). Then `gh`
+   authed; the task's `depends-on` already merged. Register the repo once:
    `superset projects create --local --clone <url>` (returns a `prj_…` id).
 2. **Spawn the worker(s)** per the task's **`mode`** (ADR-0004) — each gets its own worktree + the right model.
    Create-and-spawn in one call:
@@ -34,8 +36,13 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    - **`low`** *(default)* — one worker, lineage **cursor** (Cursor Composer) + the gate + one adversarial reviewer.
    - **`medium`** — one worker, then the dual review on the PR → `/agentic-workflow:review`.
    - **`hard`** — repeat the spawn **2–3×** on the **same** task, one per lineage (`--agent claude` / `codex` /
-     `cursor`; bias each per `templates/ROLES.md`), then **smart-merge** the best into one diff (Opus 4.8), then
-     the medium dual review (**hard ⊇ medium**).
+     `cursor`; bias each per `templates/ROLES.md`; the claude worker runs **Fable 5 @ effort `high`**), then
+     **smart-merge** the best into one diff (**Fable 5 @ effort `xhigh`**; fallback: latest Opus ≥4.8 at
+     `high`–`xhigh`), then the medium dual review (**hard ⊇ medium**).
+
+   **Parallel fan-out:** tasks marked `parallel-safe: yes` (disjoint file sets, no unmet `depends-on`) should
+   be **spawned concurrently** — one workspace/worktree each, same calls as above. Don't serialize work the
+   plan already declared independent; conversely, never run two non-`parallel-safe` tasks at once.
 
    (GUI equivalent: `⌘N` new workspace → run the agent in its terminal.)
 3. **Gate + inspect.** Run the gate in each worktree —
@@ -44,9 +51,10 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    reward the smallest passing diff, not cleverness.
 4. Push the chosen branch; open a PR via `gh` → CI re-runs the gate. Once CI is green, review per tier
    (blockers only):
-   - **`low`** — one **adversarial reviewer** (≤10 ranked findings): spawn via
-     `superset agents create --workspace <ws> --agent claude --prompt "Review PR <pr> …"` (or review the diff
-     yourself) and post as a PR comment; nits are advisory.
+   - **`low`** — one **adversarial reviewer** (≤10 ranked findings): **Fable 5 @ effort `medium`** — spawn via
+     `superset agents create --workspace <ws> --agent claude --prompt "Review PR <pr> …"` (or run
+     `claude --model claude-fable-5 --effort medium` directly, or review the diff yourself) and post as a PR
+     comment; nits are advisory.
    - **`medium`** / post-**`hard`** smart-merge — run `/agentic-workflow:review` on the PR (dual
      cross-lineage review).
    Then **a human merges**. **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate advanced

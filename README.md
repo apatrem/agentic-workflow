@@ -12,7 +12,7 @@ The orchestration **engine** is an **external worktree manager** — currently *
 - **`/agentic-workflow:architect`** — Phase 1: grill-with-docs → ADRs + CONTEXT (grill-me when no domain model yet).
 - **`/agentic-workflow:plan`** — Phase 2: tasks with acceptance tests, `risk`, `mode`.
 - **`/agentic-workflow:run`** — Phase 3: drive Superset; human merges.
-- **`/agentic-workflow:review`** — the `medium`-tier dual review on a PR (GPT-5.5 xhigh + Opus 4.8 ultrathink → synthesis).
+- **`/agentic-workflow:review`** — the `medium`-tier dual review on a PR (GPT-5.5 xhigh + Fable 5 effort-high → synthesis).
 - **`docs/adr/*`** — the decision record (the durable asset).
 - **`docs/WORKFLOW.md`** — the one-page model.
 - **`templates/`** — AGENTS.md, pre-commit, CLAUDE/.cursor, task template, agent biases.
@@ -21,7 +21,7 @@ The orchestration **engine** is an **external worktree manager** — currently *
 **Engine = an external interactive manager (currently Superset). Policy/conventions = this plugin. Per-repo specifics = committed in the repo** (`AGENTS.md`, the gate, `tasks/`, ADRs). Nothing engine-level is copied per repo, so there is no drift — and the engine slot swaps without touching the conventions.
 
 ## Default posture
-A per-task **effort/review dial — `mode: low | medium | hard`, default `low`** (prefer low, justify higher; ADR-0004). `low` = one implementer + deterministic gate + one adversarial reviewer. `medium` adds an independent dual review on every PR (GPT-5.5 xhigh + Opus 4.8 ultrathink, synthesized). `hard` adds competitive best-of-N + an Opus **smart-merge** (synthesize N attempts → one diff), then the medium dual review (**hard ⊇ medium**). **Humans merge** at every tier — **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate, orthogonal opt-in tier you graduate into (ADR-0003/0008), not implied by `hard`.
+A per-task **effort/review dial — `mode: low | medium | hard`, default `low`** (prefer low, justify higher; ADR-0004). `low` = one implementer + deterministic gate + one adversarial reviewer. `medium` adds an independent dual review on every PR (GPT-5.5 xhigh + Fable 5 effort-high, synthesized). `hard` adds competitive best-of-N + a **smart-merge** (Fable 5 @ xhigh synthesizes N attempts → one diff), then the medium dual review (**hard ⊇ medium**). Claude-lineage roles are **Fable-first**; the latest Opus (≥4.8) at high–xhigh is the documented fallback (ADR-0004 Update). **Humans merge** at every tier — **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate, orthogonal opt-in tier you graduate into (ADR-0003/0008), not implied by `hard`.
 
 ## Requirements
 Claude Code · the official CLIs logged in on your subs (`claude`, `codex`, `cursor-agent`) · `gh` · [Superset](https://github.com/superset-sh/superset/releases/latest) (macOS; CLI bundled in the app) for the engine.
