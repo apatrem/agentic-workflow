@@ -15,7 +15,7 @@ The orchestration **engine** is an **external worktree manager** — currently *
 - **`/agentic-workflow:review`** — the `medium`-tier dual review on a PR (two cross-lineage reviewers → synthesis; models in `docs/MODELS.md`).
 - **`docs/adr/*`** — the decision record (the durable asset).
 - **`docs/WORKFLOW.md`** — the one-page model.
-- **`docs/ORCHESTRATOR_PLAYBOOK.md`** — the lived `/run` loop: spawn → verify → review → remediate → cleanup.
+- **`docs/ORCHESTRATOR_PLAYBOOK.md`** — the lived `/run` loop: spawn → verify → review → remediate → re-check → cleanup.
 - **`docs/MODELS.md`** — the living table of which model runs which role/tier (revisit often).
 - **`templates/`** — AGENTS.md, pre-commit, CLAUDE/.cursor, task template, agent biases.
 
@@ -23,7 +23,7 @@ The orchestration **engine** is an **external worktree manager** — currently *
 **Engine = an external interactive manager (currently Superset). Policy/conventions = this plugin. Per-repo specifics = committed in the repo** (`AGENTS.md`, the gate, `tasks/`, ADRs). Nothing engine-level is copied per repo, so there is no drift — and the engine slot swaps without touching the conventions.
 
 ## Default posture
-A per-task **effort/review dial — `mode: low | medium | hard`, default `low`** (prefer low, justify higher; ADR-0004). `low` = one implementer + deterministic gate + one adversarial reviewer. `medium` adds an independent dual review on every PR (two cross-lineage reviewers, synthesized). `hard` adds competitive best-of-N + a **smart-merge** (synthesizes N attempts → one diff), then the medium dual review plus an added independent lens (**hard ⊇ medium**). **Which model runs each role/tier is a living table — `docs/MODELS.md`** (revisit often); the durable principle (role-keyed cost ladder, reviewers cross-lineage **and** independent of the implementer) is ADR-0004. **Humans merge** at every tier — **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate, orthogonal opt-in tier you graduate into (ADR-0003/0008), not implied by `hard`.
+A per-task **effort/review dial — `mode: low | medium | hard`, default `low`** (prefer low, justify higher; ADR-0004). `low` = one implementer + deterministic gate + one adversarial reviewer. `medium` adds an independent dual review on every PR (two cross-lineage reviewers, synthesized). `hard` adds competitive best-of-N + a **smart-merge** (synthesizes N attempts → one diff), then the medium dual review plus an added independent lens (**hard ⊇ medium**). **Which model runs each role/tier is a living table — `docs/MODELS.md`** (revisit often); the durable principle (role-keyed cost ladder, reviewers cross-lineage **and** independent of the implementer) is ADR-0004. When review raises blockers, a bounded **remediation loop** kicks in — the tier's implementer fixes the punch-list, excess findings escalate a tier + force a full re-review, capped at 3 rounds → else `needs-human` (ADR-0010). **Humans merge** at every tier — **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate, orthogonal opt-in tier you graduate into (ADR-0003/0008), not implied by `hard`.
 
 ## Requirements
 Claude Code · the official CLIs logged in on your subs (`claude`, `codex`, `cursor-agent`) · `gh` · [Superset](https://github.com/superset-sh/superset/releases/latest) (macOS; CLI bundled in the app) for the engine.
