@@ -12,10 +12,17 @@
 >   rate-limit fragility (a Fable reviewer stalled a PR mid-review), not to save tokens.
 > - **Reviewers are cross-lineage *and* independent of the implementer** (not just reviewer-vs-reviewer). With
 >   three lineages, the reviewer(s) are the lineage(s) the implementer didn't use.
+> - **`hard` guarantees ≥1 structurally-clean lens** *(added 2026-06-11; see below)* — at least one
+>   reviewer whose **lineage neither authored nor synthesized**. Because a 3-lineage best-of-N would leave
+>   no clean lineage, **`hard` caps best-of-N at two lineages and reserves the third entirely for review**.
+>   This holds *by construction* and survives the loss of any optional extra lens — unlike a guarantee that
+>   leans on one specific model staying available. The cost is one fewer competing author. Concrete lineage
+>   assignment + why the synthesizer can't be the clean lineage: **`docs/MODELS.md`**.
 > - **"Difficult" promotes to `hard`** — no separate "stronger single implementer" knob; a task worth a
 >   premium author is worth the `hard` best-of-N.
-> - **`hard ⊇ medium` preserved** — `hard`'s review is the medium dual **plus** an added lens, degrading to
->   the medium dual if that lens is unavailable.
+> - **`hard ⊇ medium` preserved** — `hard`'s review is still a cross-lineage dual (at least the medium
+>   scrutiny), now with the guarantee that one lens is structurally clean; an optional extra lens may be
+>   added and may degrade away without breaking the guarantee.
 > Concrete current models are in **`docs/MODELS.md`**; the prose below points there rather than naming models.
 
 > **Update (2026-06-10 — SUPERSEDED by the 2026-06-11 update above) — Claude-lineage model policy: Fable-first, pinned by CLI flags.** All
@@ -52,7 +59,7 @@ The two axes bundled into the one dial:
 |--------|-----------------|--------------|
 | **low** *(default)* | 1 implementer | deterministic gate + **1 adversarial reviewer** |
 | **medium** | 1 implementer | deterministic gate + an independent **dual review** on every PR |
-| **hard** | **competitive best-of-N** across lineages → **smart-merge** into one diff | the **medium** dual review, run on the synthesized result |
+| **hard** | **competitive best-of-N** over **2 lineages** → **smart-merge** into one diff | the **medium** cross-lineage dual review, run on the synthesized result, with **≥1 structurally-clean lens** |
 
 - **low (default)** — today's baseline: one implementer + the deterministic gate + one adversarial
   reviewer. The routine ~90% path.
@@ -63,15 +70,20 @@ The two axes bundled into the one dial:
   The orchestrator then **synthesizes both** into one verdict: agreements, disagreements, and a
   deduped, severity-ranked punch-list. **Veto is blockers-only** (correctness / security /
   spec-violation / regression); nits are advisory follow-ups. Mechanics live in `commands/review.md`.
-- **hard** — competitive best-of-N: N agents implement the **same** task in isolated worktrees across
-  lineages (cursor / codex / claude — current models in **`docs/MODELS.md`**), then a **smart merge**
-  synthesizer grafts the best of the attempts into one diff — and **then the dual review runs on that
-  synthesized result, plus an added independent lens** (`docs/MODELS.md`; this is how `hard ⊇ medium`).
+- **hard** — competitive best-of-N over **two lineages**: agents implement the **same** task in isolated
+  worktrees, then a **smart-merge** synthesizer grafts the best of the attempts into one diff — and **then
+  the cross-lineage dual review runs on that synthesized result**, with the guarantee that **one lens is
+  structurally clean** (its lineage neither authored nor synthesized). The third lineage is held out of
+  authoring/synthesis precisely to *be* that clean lens; the synthesizer therefore runs on an authoring
+  lineage, not the clean one (current assignment + rationale in **`docs/MODELS.md`**; this is how
+  `hard ⊇ medium` *and* the independence invariant both hold).
 
 ### Two refinements (load-bearing — do not drop)
-1. **`hard` ⊇ `medium`.** The synthesized winner of a `hard` run still gets the **full medium dual review
-   plus an added independent lens** (`docs/MODELS.md`). A `hard` task must never receive *less* scrutiny than a `medium` one; smart-merge
-   adds an authoring step on top of medium's review, it does not replace it.
+1. **`hard` ⊇ `medium`, with a structurally-clean lens.** The synthesized winner of a `hard` run still gets
+   a **cross-lineage dual review** — at least the **medium** scrutiny — and the invariant adds that **≥1
+   reviewer is fully independent** (lineage neither authored nor synthesized). A `hard` task must never
+   receive *less* scrutiny than a `medium` one; smart-merge adds an authoring step on top of medium's
+   review, it does not replace it. (Achieved by capping best-of-N at two lineages — `docs/MODELS.md`.)
 2. **smart-merge ≠ auto-merge.** "Smart merge" means *synthesizing N attempts into one best diff* — an
    **authoring** step. The PR **merge** stays **human by default** (ADR-0003). Bypassing the human
    merge gate is the **separate, opt-in advanced tier** (ADR-0008), **orthogonal** to this effort dial.

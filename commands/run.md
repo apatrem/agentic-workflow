@@ -40,10 +40,12 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    ```
    - **`low`** *(default)* — one worker, lineage **cursor** (Cursor Composer) + the gate + one adversarial reviewer.
    - **`medium`** — one worker, then the dual review on the PR → `/agentic-workflow:review`.
-   - **`hard`** — repeat the spawn **2–3×** on the **same** task, one per lineage (`--agent claude` / `codex` /
-     `cursor`; bias each per `templates/ROLES.md`; models per **`docs/MODELS.md`**), then **smart-merge** the
-     best into one diff (synthesizer in `MODELS.md`), then the medium dual review **plus the added `hard`
-     lens** (**hard ⊇ medium**; `/agentic-workflow:review`).
+   - **`hard`** — best-of-N over **two authoring lineages** (`--agent cursor` + `--agent codex`; bias each per
+     `templates/ROLES.md`; models per **`docs/MODELS.md`**). **Hold the third lineage — claude — out of
+     authoring and synthesis**, so it stays the *structurally-clean* reviewer (ADR-0004 invariant). Then
+     **smart-merge** the best into one diff with the **codex** synthesizer — **not** the claude orchestrator,
+     or claude is no longer clean (`docs/MODELS.md`). Then the cross-lineage dual review with **Opus as the
+     clean lens** (+ optional Fable third) — **hard ⊇ medium** (`/agentic-workflow:review`).
 
    **Parallel fan-out:** tasks marked `parallel-safe: yes` (disjoint file sets, no unmet `depends-on`) should
    be **spawned concurrently** — one workspace/worktree each, same calls as above. Don't serialize work the

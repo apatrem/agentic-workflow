@@ -1,0 +1,49 @@
+# Self-CI: this plugin ships JSON/YAML templates, so it must prove they parse.
+# Self-discovering — any new *.json / *.yaml / *.yml is validated automatically.
+name: validate-templates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install --quiet pyyaml
+
+      - name: Validate all JSON parses
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          fail=0
+          for f in **/*.json; do
+            if python -m json.tool "$f" > /dev/null 2>&1; then
+              echo "VALID   $f"
+            else
+              echo "INVALID $f"; python -m json.tool "$f" || true; fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Validate all YAML parses
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          fail=0
+          for f in **/*.yaml **/*.yml; do
+            if python -c "import sys,yaml; yaml.safe_load(open(sys.argv[1]))" "$f" 2>/dev/null; then
+              echo "VALID   $f"
+            else
+              echo "INVALID $f"; python -c "import sys,yaml; yaml.safe_load(open(sys.argv[1]))" "$f" || true; fail=1
+            fi
+          done
+          exit $fail
