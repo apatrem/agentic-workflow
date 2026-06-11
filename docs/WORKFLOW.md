@@ -32,3 +32,4 @@ Orchestration (worktree sessions, run agents, review diffs) = **Superset** (ADR-
 3. **Small-PR budget** — routine < 300 lines; split/stack larger; separate mechanical from behavioural.
 4. **Sparse review** — blockers only, ≤10 findings, ranked. AI review is an assistant, not a merge authority (it catches ~15–31% of issues).
 5. **Lessons → guardrails** — every recurring mistake becomes a test / lint / Semgrep / AGENTS.md rule.
+6. **Prune after merge** — GitHub auto-deletes the remote head branch on merge; locally run `git fetch --prune` then delete branches marked `: gone]` (`git branch -vv`) so nothing goes stale. Mechanism + why squash needs this: `ORCHESTRATOR_PLAYBOOK.md` §7.
