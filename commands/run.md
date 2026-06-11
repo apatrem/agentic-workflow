@@ -13,7 +13,9 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
 > add `~/.superset/bin` to `PATH`, or use a Superset terminal where it is already on `PATH`). The authoritative
 > command/flag surface is `superset --help` / the MCP tool schemas; this repo records the *policy* (what to
 > spawn, per tier), **not** the engine's API — external (ADR-0002 / 0007) and versioned. Commands below verified
-> against **superset v0.2.19** — re-check on upgrade.
+> against **superset v0.2.19** — re-check on upgrade. The end-to-end operational loop an orchestrator actually
+> runs — wrapped prompts, monitoring, verify-before-PR, the remediation→re-verify cycle, cleanup, and
+> spawn-reliability fallbacks — is in **`docs/ORCHESTRATOR_PLAYBOOK.md`**.
 
 1. **Pre-flight:** `main` clean + protected; the agent CLIs (`claude` / `codex` / `cursor-agent`) logged in on
    your subscription **and each engine preset set to run non-interactively** — a preset is a stored command
@@ -26,12 +28,15 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    authed; the task's `depends-on` already merged. Register the repo once:
    `superset projects create --local --clone <url>` (returns a `prj_…` id).
 2. **Spawn the worker(s)** per the task's **`mode`** (ADR-0004) — each gets its own worktree + the right model.
-   Create-and-spawn in one call:
+   Create-and-spawn in one call (wrap the task file in an orchestrator preamble — playbook §2 — never pass it bare):
    ```
    # verified against superset v0.2.19 — confirm with `superset --help`
    superset workspaces create --local --project prj_… --name <task> \
-     --branch agent/<lineage>/<task> --agent <lineage> --prompt "$(cat tasks/<id>.md)"
+     --branch agent/<lineage>/<task> --agent <lineage> --prompt "$(cat /tmp/<task>-prompt.txt)"
    # add --quiet for just the workspace id (scripting); --base-branch defaults to the project default
+   # if the agent doesn't materialize (silent race), two-step instead — the reliable default:
+   #   superset workspaces create … (no --agent), then
+   #   superset agents create --workspace <ws> --agent <lineage> --prompt "$(cat /tmp/<task>-prompt.txt)"
    ```
    - **`low`** *(default)* — one worker, lineage **cursor** (Cursor Composer) + the gate + one adversarial reviewer.
    - **`medium`** — one worker, then the dual review on the PR → `/agentic-workflow:review`.
@@ -48,7 +53,8 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
 3. **Gate + inspect.** Run the gate in each worktree —
    `superset terminals create --workspace <ws> --command "<gate>"` — and review the diff (GUI `⌘L`, or open the
    worktree in your editor). For `hard`, compare attempts side-by-side and synthesize the smallest correct diff —
-   reward the smallest passing diff, not cleverness.
+   reward the smallest passing diff, not cleverness. **Verify before pushing:** diff scope + do-not-touch
+   contracts untouched + the gate green by *your own* run, not the worker's claim (`ok` proves nothing — playbook §3–4).
 4. Push the chosen branch; open a PR via `gh` → CI re-runs the gate. Once CI is green, review per tier
    (blockers only):
    - **`low`** — one **adversarial reviewer** (≤10 ranked findings): **Fable 5 @ effort `medium`** — spawn via
@@ -57,6 +63,11 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
      comment; nits are advisory.
    - **`medium`** / post-**`hard`** smart-merge — run `/agentic-workflow:review` on the PR (dual
      cross-lineage review).
+   - If a lineage's Superset spawn is flaky (codex not starting, claude PTY stalling on the worktree
+     trust-prompt), run the reviewer **directly** in the worktree — `codex exec … < prompt` / `claude -p … < prompt`
+     — same model + PR-comment contract (playbook §5).
+   If review raises blockers: **remediate on the same branch** (a worker whose prompt *is* the punch-list), then
+   **re-verify each blocker with the reviewer that raised it** before re-confirming CI (playbook §6).
    Then **a human merges**. **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate advanced
    tier (ADR-0003 / 0008).
 5. **Lessons → guardrails:** turn any recurring mistake into a test / lint rule / AGENTS.md line.

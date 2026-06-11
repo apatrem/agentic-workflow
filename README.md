@@ -15,6 +15,7 @@ The orchestration **engine** is an **external worktree manager** — currently *
 - **`/agentic-workflow:review`** — the `medium`-tier dual review on a PR (GPT-5.5 xhigh + Fable 5 effort-high → synthesis).
 - **`docs/adr/*`** — the decision record (the durable asset).
 - **`docs/WORKFLOW.md`** — the one-page model.
+- **`docs/ORCHESTRATOR_PLAYBOOK.md`** — the lived `/run` loop: spawn → verify → review → remediate → cleanup.
 - **`templates/`** — AGENTS.md, pre-commit, CLAUDE/.cursor, task template, agent biases.
 
 ## The exportability contract

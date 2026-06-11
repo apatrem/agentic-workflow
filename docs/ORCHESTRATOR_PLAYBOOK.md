@@ -1,0 +1,74 @@
+# Orchestrator playbook — the lived `/run` loop
+
+Companion to `commands/run.md`. `run.md` is the *policy* (what to spawn per tier); this is the *operational loop* an orchestrator actually executes, distilled from real runs. The engine is **Superset** (ADR-0002); commands verified against **v0.2.x** — re-check `superset --help` on upgrade, and treat the §7 reliability notes as version-pinned (they may go stale), the loop in §1–6 as durable.
+
+## 1. The loop
+
+```
+spawn → monitor → verify → PR → review → synthesize → remediate → re-verify → cleanup
+```
+
+The orchestrator stays in its own thread and never implements or reviews inline — it spawns workers, then inspects, gates, and PRs their output. One worker = one workspace = one worktree = one branch.
+
+## 2. Spawn — what actually works
+
+**Two-step, not one** — the canonical sequence (confirmed first-try for **all three lineages**: cursor, claude, codex). Create the workspace first (its worktree + setup hook run), *then* add the agent into the ready workspace:
+
+```bash
+# 1. workspace WITHOUT --agent → returns workspace.id
+superset workspaces create --local --project <prj-id> --name <task> --branch agent/<lineage>/<task> --json
+# 2. agent into the ready workspace
+superset agents create --workspace <ws-id> --agent <preset> --prompt "$(cat /tmp/<task>-prompt.txt)" --json
+```
+
+`<lineage>` → `<preset>`: **cursor → `cursor-agent`** (default `low` implementer) · **claude → `claude`** · **codex → `codex`**. `<prj-id>` from `superset projects list`.
+
+The `--agent`-at-create form in `run.md` works when it works, but a silent race can leave the worktree up with no agent; the two-step is the reliable default and is also how you add reviewers to an existing workspace. Workspaces created this way are first-class in the Superset v2 sidebar (no UI workaround). Earlier-session spawn failures traced to *conditions* (`--pr`-created review workspaces, oversized prompts, a first-worktree trust prompt) — not this sequence.
+
+**Pinning a model per spawn.** `agents create` has no `--model` flag — the model comes from the lineage preset, which falls back to the CLI default if unpinned. To run one spawn on a specific model (a cheap throwaway, or to dodge a rate-limited tier), temporarily set it in the preset's host config and revert right after — the daemon reads it per-spawn, running agents are unaffected (args read at launch), and the revert leaves no trace. (Engine-internal and version-pinned — confirm the host-config shape on your Superset version.)
+
+**Preconditions that bite (each fails *silently* — `ok: true` proves nothing):**
+- The lineage **preset must carry its auto-approve flag** or the worker hangs on the first prompt forever (cursor `--force`/`--yolo`; claude `--dangerously-skip-permissions`; codex `--dangerously-bypass-approvals-and-sandbox`). Stored in the engine's host config, not the CLI call — verify with `superset agents list --local`.
+- **`--pr <N>` / `--branch` dies if that branch is checked out in another worktree** (git refuses duplicate checkout → setup fails, no worktree appears). Free the branch first.
+
+**Wrap the prompt — never pass the bare task file.** A worker driven by `cat tasks/<id>.md` alone doesn't know the house rules. Prepend an orchestrator preamble:
+
+> Read AGENTS.md first (source of truth). Implement task `<id>` in **this** worktree on the current branch. Honour the task's do-not-touch list and size budget; no new dependencies; never auto-"fix" invalid input — fail loudly. *(If a sibling task runs in parallel, state the file-set disjointness constraints.)* Run the full gate until green. Commit small — **but do NOT push**: the orchestrator inspects the diff and opens the PR.
+
+The "don't push" clause is load-bearing: it keeps the PR boundary with the orchestrator, who verifies before anything reaches `origin`.
+
+## 3. Monitor — `ok` means nothing
+
+Don't trust the spawn's return. Watch for the *artifact*: commits landing on the branch, then the tree going quiet. With several cursor workers running, process-exit is ambiguous — key the "done" signal on **commits present + working tree clean for N minutes** instead. Sanity-check liveness early (process exists / fresh session log / worktree materialized); if a spawn produced nothing after a few minutes, it failed silently — re-spawn or fall back (§5).
+
+## 4. Verify before PR — the orchestrator's gate
+
+Before pushing a worker's branch, the orchestrator independently:
+1. **Inspects diff scope** — `git diff main --stat`; confirm the **do-not-touch / protected contracts are untouched** (`git diff main --name-only | grep <protected>`).
+2. **Runs the full gate itself** in the worktree (build + lint + test + validate) — a worker's green claim is not proof.
+3. Only then pushes and opens the PR via `gh`, with a body that maps changes to the task's acceptance criteria. Wait for **CI green** before paying for review (Ritual 2 — don't review red code).
+
+## 5. Review per tier — with a direct-CLI fallback
+
+Tiers per `run.md`/`review.md`: `low` → one adversarial reviewer; `medium`/post-`hard` → the cross-lineage dual review. Reviewers run as **spawned workers, never inline**, each posting its own PR comment; the orchestrator synthesizes.
+
+**If a Superset spawn genuinely stalls** (rare — e.g. a first-worktree trust prompt the headless PTY can't answer), run the CLI **directly** in the workspace's worktree — same model, same independence, same PR-comment contract, just no engine UI:
+
+```bash
+codex exec --dangerously-bypass-approvals-and-sandbox - < review-prompt.txt          # GPT-lineage, xhigh from ~/.codex/config.toml
+claude -p --model claude-fable-5 --effort high --dangerously-skip-permissions < review-prompt.txt   # Claude-lineage (Fable-first, ADR-0004 Update)
+```
+
+Pass the prompt via stdin/file to dodge argv quoting. Tell each reviewer to verify external/claimed facts itself and to run the gate.
+
+## 6. Synthesize → remediate → re-verify
+
+- **Synthesize** both lenses into one PR comment: agreements (highest priority), disagreements (adjudicate — keep only real blockers), a deduped severity-ranked punch-list, and a verdict (*blockers present → changes required*, else advisory-only). Adjudicate honestly: a finding one reviewer reproduced and the other missed is still a blocker (real runs: a same-basename image collision and a test-helper masking a missing chart-category cache — each caught by exactly one lens).
+- **Remediate on the same branch/workspace**: spawn a worker whose prompt *is* the synthesis punch-list ("fix exactly this, nothing else"), same do-not-touch constraints, gate-until-green, commit-don't-push.
+- **Re-verify with the original finder**: hand each blocker back to the reviewer that raised it for an adversarial RESOLVED / NOT-RESOLVED verdict — re-running their own reproduction, not just trusting the new tests. Then re-confirm CI.
+
+## 7. Cleanup after merge (engine-reliability notes)
+
+After a human merges, leave no debris: delete the Superset workspace, delete the branch (local + remote), prune the worktree, pull `main`.
+
+Version-pinned quirks to expect (Superset v0.2.x / v1.12.x): `workspaces delete` has returned `Error: Unexpected end of JSON input` and not deleted — re-check. On **v2**, CLI-created workspaces appear in the sidebar like any other (confirmed); the old "invisible / needs Add-to-sidebar" issue was **v1-only** (`superset-sh/superset#5083`).
