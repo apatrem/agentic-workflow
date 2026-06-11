@@ -66,14 +66,8 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    - If a lineage's Superset spawn is flaky (codex not starting, claude PTY stalling on the worktree
      trust-prompt), run the reviewer **directly** in the worktree — `codex exec … < prompt` / `claude -p … < prompt`
      — same model + PR-comment contract (playbook §5).
-   If review raises blockers, run the **remediation loop** (ADR-0010; mechanics in playbook §6): **remediate
-   on the same branch** with the **tier's implementer** (the *remediator* — `low`/`medium`: cursor; `hard`: the
-   winning best-of-N lineage; `docs/MODELS.md`), prompt = the punch-list. Then re-check: the **default** is a
-   cheap **targeted re-verify** (each blocker back to the reviewer that raised it); but if findings are
-   *excessive* (blocker count ≥ the tier's *N*, a **`systemic`** flag, or the fix **ballooned**) **escalate one
-   tier and run a full fresh review round** — `low→medium` adds the dual review; `medium→hard` keeps the diff as
-   **seed candidate #0**, runs best-of-N in parallel, and smart-merges {seed + attempts}. Cap: **3 full review
-   rounds** (the initial review counts; re-verifies don't); blockers surviving round 3 → **`needs-human`**
-   (ADR-0006). Then **a human merges**. **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate
-   advanced tier (ADR-0003 / 0008).
+   If review raises blockers: **remediate on the same branch** (a worker whose prompt *is* the punch-list), then
+   **re-verify each blocker with the reviewer that raised it** before re-confirming CI (playbook §6).
+   Then **a human merges**. **smart-merge ≠ auto-merge**; autonomous auto-merge is the separate advanced
+   tier (ADR-0003 / 0008).
 5. **Lessons → guardrails:** turn any recurring mistake into a test / lint rule / AGENTS.md line.

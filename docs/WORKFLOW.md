@@ -12,8 +12,6 @@ One dial, two axes (authoring depth × review rigor); set per task, default `low
 - **medium** — 1 implementer + gate + an independent **dual review** on every PR: two cross-lineage reviewers, each independent of the implementer, each posts a PR comment; orchestrator synthesizes (agreements / disagreements / deduped severity-ranked punch-list). Blockers-only veto. → `/agentic-workflow:review`.
 - **hard** — competitive best-of-N across lineages → **smart-merge** (synthesizer grafts the best attempts into one diff) → **then the medium dual review plus an added independent lens** on that result (**hard ⊇ medium**).
 
-**Remediation loop (ADR-0010):** review blockers → the **tier's implementer** (the *remediator*) fixes the punch-list → **targeted re-verify** by default; if findings are excessive (count ≥ the tier's *N*, `systemic`, or the fix ballooned) **escalate one tier + a full re-review** (`medium→hard` keeps the diff as a best-of-N seed). Capped at **3 review rounds** → else **`needs-human`** (ADR-0006).
-
 **Model policy:** which model runs each role/tier is a **living table — `docs/MODELS.md`** (the single source; revisit often against cursor.com/cursorbench + deepswe.datacurve.ai). The *durable principle* — role-keyed cost ladder, reviewers cross-lineage **and** independent of the implementer, "difficult"→`hard` — is **ADR-0004**.
 
 **smart-merge ≠ auto-merge:** smart-merge synthesizes N attempts into one diff; the PR **merge stays human** by default (ADR-0003). Auto-merge is the separate, orthogonal advanced tier (ADR-0008) — `hard` does *not* imply it.

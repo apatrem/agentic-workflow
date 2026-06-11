@@ -61,18 +61,11 @@ claude -p --model claude-opus-4-8 --effort xhigh --dangerously-skip-permissions 
 
 Pass the prompt via stdin/file to dodge argv quoting. Tell each reviewer to verify external/claimed facts itself and to run the gate.
 
-## 6. Synthesize → remediate → re-check (the loop — ADR-0010)
+## 6. Synthesize → remediate → re-verify
 
-The decision behind this loop (remediator = tier implementer; excess-findings escalation; 3-round cap) is **ADR-0010**; this is how you run it.
-
-- **Synthesize** both lenses into one PR comment: agreements (highest priority), disagreements (adjudicate — keep only real blockers), a deduped severity-ranked punch-list, and a verdict (*blockers present → changes required*, else advisory-only). Emit two machine-usable signals alongside it: the **blocker count** and a **`systemic` flag** (is the diff wrong in *approach*, or just in details?). Adjudicate honestly: a finding one reviewer reproduced and the other missed is still a blocker (real runs: a same-basename image collision and a test-helper masking a missing chart-category cache — each caught by exactly one lens). **This synthesis is round 1** of the 3-round cap.
-- **Remediate on the same branch/workspace** with the **tier's implementer** (the *remediator* — `low`/`medium`: cursor/Composer; `hard`: the winning best-of-N lineage; `docs/MODELS.md`): spawn a worker whose prompt *is* the synthesis punch-list ("fix exactly this, nothing else"), same do-not-touch constraints, gate-until-green, commit-don't-push. Have it **report if the fix ballooned** beyond the punch-list.
-- **Re-check the remediated diff — pick one:**
-  - **Default — targeted re-verify (cheap, uncapped):** hand each blocker back to the reviewer that raised it for an adversarial RESOLVED / NOT-RESOLVED verdict — re-running its own reproduction, not just trusting the new tests. All RESOLVED + CI green → done.
-  - **Excess findings → full re-review (counts as a round):** if **any** of — blocker count ≥ *N* for the tier (`docs/MODELS.md`), the synthesis flagged **`systemic`**, or the remediator **ballooned** — then **escalate one tier** and run a **full fresh review round** on the remediated diff:
-    - **`low→medium`** — add the cross-lineage dual review to the same diff.
-    - **`medium→hard`** — **keep the diff as seed candidate #0**, spawn best-of-N **in parallel**, smart-merge {seed + attempts} into one diff (don't discard the remediation work), then the triple review.
-- **Bound:** at most **3 full review rounds** (round 1 = the initial synthesis above; targeted re-verifies don't count). Blockers surviving round 3 → **`needs-human`** (ADR-0006): stop auto-looping, hand the PR to the human merging with the open blockers flagged. *(The unattended auto-merge tier keeps ADR-0008's stricter "repair once" — don't apply this 3-round budget there.)*
+- **Synthesize** both lenses into one PR comment: agreements (highest priority), disagreements (adjudicate — keep only real blockers), a deduped severity-ranked punch-list, and a verdict (*blockers present → changes required*, else advisory-only). Adjudicate honestly: a finding one reviewer reproduced and the other missed is still a blocker (real runs: a same-basename image collision and a test-helper masking a missing chart-category cache — each caught by exactly one lens).
+- **Remediate on the same branch/workspace**: spawn a worker whose prompt *is* the synthesis punch-list ("fix exactly this, nothing else"), same do-not-touch constraints, gate-until-green, commit-don't-push.
+- **Re-verify with the original finder**: hand each blocker back to the reviewer that raised it for an adversarial RESOLVED / NOT-RESOLVED verdict — re-running their own reproduction, not just trusting the new tests. Then re-confirm CI.
 
 ## 7. Cleanup after merge (engine-reliability notes)
 
