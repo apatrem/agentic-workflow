@@ -51,11 +51,14 @@ a targeted re-verify.
 ### 4. Escalation keeps the diff — `hard` seeds best-of-N from it
 
 Escalation raises **review** scrutiny without discarding work:
-- **`low→medium`** — add the cross-lineage **dual** review to the same remediated diff.
-- **`medium→hard`** — **do not discard the diff.** Treat the remediated diff as **seed candidate #0**,
-  spawn best-of-N **in parallel**, then **smart-merge {seed + the new attempts}** into one diff (the
-  remediation work is a candidate, not thrown away), then the triple review. This preserves `hard`'s
-  authoring step while honouring the work already done.
+- **`low→medium`** — add the cross-lineage **dual** review to the same remediated diff, **in the same
+  workspace/branch** (no new worktree — just spawn the extra reviewer per §2).
+- **`medium→hard`** — **do not discard the diff.** Treat the remediated diff as **seed candidate #0**
+  (it stays in its existing workspace/branch); spawn the **other** best-of-N candidates as **new
+  workspaces/branches**, one per remaining lineage, **in parallel** (the standard `hard` fan-out — each
+  its own worktree); then **smart-merge {seed + the new attempts}** onto one chosen branch (the
+  remediation work is a candidate, not thrown away), then the triple review on that branch. This preserves
+  `hard`'s authoring step while honouring the work already done.
 
 ### 5. Bound: 3 full review rounds, then `needs-human`
 

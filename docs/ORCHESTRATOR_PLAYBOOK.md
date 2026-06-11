@@ -8,7 +8,7 @@ Companion to `commands/run.md`. `run.md` is the *policy* (what to spawn per tier
 spawn → monitor → verify → PR → review → synthesize → remediate → re-verify → cleanup
 ```
 
-The orchestrator stays in its own thread and never implements or reviews inline — it spawns workers, then inspects, gates, and PRs their output. One worker = one workspace = one worktree = one branch.
+The orchestrator stays in its own thread and never implements or reviews inline — it spawns workers, then inspects, gates, and PRs their output. **One *authoring* worker = one workspace = one worktree = one branch** — that maps the implementer (and, at `hard`, each best-of-N candidate) 1:1 to a branch. **Reviewers and the remediator are *added into* an existing authoring workspace, not given their own** (`agents create --workspace <ws>`); they don't get a fresh branch. So a single `low`/`medium` workspace hosts the implementer, then the reviewer(s), then (if needed) the remediator — several agents, one branch.
 
 ## 2. Spawn — what actually works
 
@@ -51,6 +51,8 @@ Before pushing a worker's branch, the orchestrator independently:
 ## 5. Review per tier — with a direct-CLI fallback
 
 Tiers per `run.md`/`review.md`: `low` → one adversarial reviewer; `medium`/post-`hard` → the cross-lineage dual review. Reviewers run as **spawned workers, never inline**, each posting its own PR comment; the orchestrator synthesizes.
+
+**A reviewer acts on the *PR*, not the branch** — it reads the diff and posts a comment; it does **not** commit and does **not** branch. It's spawned *into the authoring workspace* (`agents create --workspace <ws>`) only so the checkout is already there; its output is the PR comment, not a worktree change. (Contrast the *remediator* — §6 — which is also added to that same workspace but **does** commit to the branch.) The implementer's worktree may be dirty/ahead of the pushed PR head; if a reviewer needs a clean tree it can run on a fresh `--pr <N>` checkout instead — same model, same PR-comment contract.
 
 **If a Superset spawn genuinely stalls** (rare — e.g. a first-worktree trust prompt the headless PTY can't answer), run the CLI **directly** in the workspace's worktree — same model, same independence, same PR-comment contract, just no engine UI:
 
