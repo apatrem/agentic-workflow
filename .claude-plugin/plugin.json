@@ -1,6 +1,6 @@
 {
   "name": "agentic-workflow",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A conventions + decisions + process pack for agentic coding. It rides on top of an external interactive engine (currently Superset) — it does NOT implement one. Backbone: AGENTS.md + tests/CI + git/PR. Ships grill-me / grill-with-docs planning skills, a task template, baseline repo conventions, and the decision record (ADRs).",
   "author": {
     "name": "Pierre Supau"

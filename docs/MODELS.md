@@ -18,6 +18,10 @@
 
 **Orchestrator** (drives `/run`, `/review`, synthesis, smart-merge) = **Claude Opus 4.8 [1M] @ High** (xHigh for the smart-merge step).
 
+**Remediator** (fixes review blockers — ADR-0010) = **the tier's implementer**: `low`/`medium` → Composer 2.5 fast *(cursor)*; `hard` → the **winning best-of-N lineage**. Fresh spawn on the same branch, prompt = the synthesis punch-list, commit-don't-push.
+
+**Excess-findings threshold *N*** (blocker count that escalates a tier + forces a full re-review — ADR-0010 §3): **low: 3 · medium: 4 · hard: 5** *(tune with experience; the `systemic` and `ballooned` judgment triggers fire regardless of count)*.
+
 ### Why these (the trade-offs)
 - **Implementer is the cost lever** (it writes all the code, on every task) → cheap-fast **Composer 2.5** by default; a premium author shows up only inside `hard`'s best-of-N. **"Difficult" promotes a task to `hard`** — there is no separate "stronger single implementer" knob (ADR-0004).
 - **Orchestrator / reviewers / synthesizer are low-volume and quality-critical** → premium, **reproducible** models. We dropped **Fable as the default** for its rate-limit fragility (a Fable reviewer stalled a PR mid-review), not to save tokens; Opus 4.8 [1M] is the reliable Claude-lineage premium.

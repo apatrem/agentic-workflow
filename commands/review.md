@@ -53,9 +53,14 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    - **Disagreements** — raised by one only; adjudicate (keep if a real blocker, else mark advisory).
    - **Deduped, severity-ranked punch-list** — blockers first, then advisory nits.
    - **Verdict:** *blockers present → changes required* (the only veto), else *no blocker → advisory only*.
+   - **Loop signals (ADR-0010)** — also state the **blocker count** and a **`systemic` flag** (is the diff
+     wrong in *approach*, or just in details?). These drive whether remediation re-checks cheaply or escalates.
 
-5. **Hand back to the human.** The synthesis informs the author and the human merger; **the human merges**
-   (ADR-0003). Auto-merge is the separate advanced tier (ADR-0008) — not triggered here.
+5. **Hand back — remediate if blockers (ADR-0010).** No blockers → the synthesis is advisory and **the human
+   merges** (ADR-0003). Blockers → `/agentic-workflow:run` drives the **remediation loop**: the tier's
+   implementer fixes the punch-list, then a **targeted re-verify** by default — or, if findings are excessive
+   (count ≥ the tier's *N*, `systemic`, or the fix ballooned), **escalate one tier + a full re-review**, capped
+   at **3 rounds** → else `needs-human`. Auto-merge is the separate advanced tier (ADR-0008) — not triggered here.
 
 > For a `hard` task: run `/agentic-workflow:run` to do the competitive best-of-N + smart-merge (synthesizer
 > in `docs/MODELS.md`), open the PR, **then run this command** on that PR (and add the third `hard` lens above).
