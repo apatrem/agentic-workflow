@@ -22,7 +22,7 @@
 - mode: low             # low (default) | medium | hard — effort/review dial (ADR-0004); prefer low, justify higher
                         #   low    = 1 implementer + gate + 1 adversarial reviewer
                         #   medium = + independent cross-lineage dual review on the PR → synthesis
-                        #   hard   = competitive best-of-N + smart-merge, THEN the dual review + added lens (hard ⊇ medium)
+                        #   hard   = best-of-N over 2 lineages + smart-merge, THEN the dual review w/ ≥1 structurally-clean lens (hard ⊇ medium)
                         #   (which model runs each role/tier: docs/MODELS.md)
 - risk: low             # low | high — high if acceptance can't be a runnable test (never auto-merge eligible, ADR-0008)
 - depends-on: []        # task ids that must be merged first

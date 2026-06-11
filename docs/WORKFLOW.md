@@ -10,7 +10,7 @@ idea → **`/agentic-workflow:architect`** (grill-with-docs → ADRs + `CONTEXT.
 One dial, two axes (authoring depth × review rigor); set per task, default `low` (ADR-0004).
 - **low** *(default, ~90%)* — 1 implementer + deterministic gate + 1 adversarial reviewer (a lineage independent of the implementer).
 - **medium** — 1 implementer + gate + an independent **dual review** on every PR: two cross-lineage reviewers, each independent of the implementer, each posts a PR comment; orchestrator synthesizes (agreements / disagreements / deduped severity-ranked punch-list). Blockers-only veto. → `/agentic-workflow:review`.
-- **hard** — competitive best-of-N across lineages → **smart-merge** (synthesizer grafts the best attempts into one diff) → **then the medium dual review plus an added independent lens** on that result (**hard ⊇ medium**).
+- **hard** — competitive best-of-N over **two lineages** → **smart-merge** (synthesizer grafts the best attempts into one diff) → **then the cross-lineage dual review** on that result, guaranteeing **≥1 structurally-clean lens** (the third lineage is held out of authoring/synthesis to *be* that lens) (**hard ⊇ medium**; the invariant is ADR-0004).
 
 **Remediation loop (ADR-0010):** review blockers → the **tier's implementer** (the *remediator*) fixes the punch-list → **targeted re-verify** by default; if findings are excessive (count ≥ the tier's *N*, `systemic`, or the fix ballooned) **escalate one tier + a full re-review** (`medium→hard` keeps the diff as a best-of-N seed). Capped at **3 review rounds** → else **`needs-human`** (ADR-0006).
 

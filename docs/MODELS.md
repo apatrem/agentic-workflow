@@ -14,9 +14,9 @@
 |------|----------------|-------------------------------------------------------------|-------------------------|
 | **low** | Composer 2.5 fast *(cursor)* | **GPT-5.5 @ High** *(codex)* — single | — |
 | **medium** | Composer 2.5 fast *(cursor)* | **GPT-5.5 @ xHigh** *(codex)* + **Opus 4.8 @ xHigh** *(claude)* | — |
-| **hard** | best-of-N: Composer 2.5 fast *(cursor)* + GPT-5.5 @ xHigh *(codex)* + Opus 4.8 @ xHigh *(claude)* | **GPT-5.5 @ xHigh** *(codex)* + **Opus 4.8 @ xHigh** *(claude)* + **Fable 5 @ High** *(claude)* | **Opus 4.8 @ xHigh** |
+| **hard** | best-of-N over **2 lineages**: Composer 2.5 fast *(cursor)* + GPT-5.5 @ xHigh *(codex)* | **Opus 4.8 @ xHigh** *(claude)* — **structurally clean** *(always)* + **GPT-5.5 @ xHigh** *(codex)* + **Fable 5 @ High** *(claude, optional 3rd)* | **GPT-5.5 @ xHigh** *(codex)* |
 
-**Orchestrator** (drives `/run`, `/review`, synthesis, smart-merge) = **Claude Opus 4.8 [1M] @ High** (xHigh for the smart-merge step).
+**Orchestrator** (drives `/run`, `/review`, synthesizes the review verdict) = **Claude Opus 4.8 [1M] @ High**. **At `hard` the orchestrator does *not* perform the smart-merge itself** — that is delegated to a spawned **codex** synthesizer (above), so the **claude** lineage neither authors nor synthesizes and stays the structurally-clean reviewer (see the invariant below). The orchestrator coordinating the run (spawning, gating, opening the PR, synthesizing *review comments*) is not code-authoring and does not taint that cleanliness.
 
 **Remediator** (fixes review blockers — ADR-0010) = **the tier's implementer**: `low`/`medium` → Composer 2.5 fast *(cursor)*; `hard` → the **winning best-of-N lineage**. Fresh spawn on the same branch, prompt = the synthesis punch-list, commit-don't-push.
 
@@ -25,12 +25,13 @@
 ### Why these (the trade-offs)
 - **Implementer is the cost lever** (it writes all the code, on every task) → cheap-fast **Composer 2.5** by default; a premium author shows up only inside `hard`'s best-of-N. **"Difficult" promotes a task to `hard`** — there is no separate "stronger single implementer" knob (ADR-0004).
 - **Orchestrator / reviewers / synthesizer are low-volume and quality-critical** → premium, **reproducible** models. We dropped **Fable as the default** for its rate-limit fragility (a Fable reviewer stalled a PR mid-review), not to save tokens; Opus 4.8 [1M] is the reliable Claude-lineage premium.
-- **Every reviewer is cross-lineage AND independent of the implementer.** With three lineages (cursor / codex / claude), the reviewer(s) are the lineage(s) the implementer didn't use.
+- **Every reviewer is cross-lineage AND independent of the implementer.** At `low`/`medium` (one cursor implementer) both other lineages are free, so every reviewer is fully clean. At `hard` this is *guaranteed by construction* — see the invariant below.
 
-### `hard` review — the third lens and graceful degradation
-`hard`'s review = the **medium dual (GPT + Opus) plus Fable** as a third lens, so `hard ⊇ medium` holds by construction. **If Fable stalls or rate-limits, `hard` degrades to exactly the medium dual (GPT + Opus)** — no special fallback path. At `hard`, Opus also runs the smart-merge, so its review doubles as merge-validation; **Fable is the fully-independent lens** (it neither implemented nor synthesized).
+### `hard` independence — the invariant (≥1 structurally-clean lens)
+**Invariant (ADR-0004): `hard` always has ≥1 reviewer whose lineage neither authored nor synthesized.** We buy this by **capping best-of-N at two lineages** (cursor + codex) and **reserving the third (claude) entirely for review** — claude does not author and does not run the smart-merge (the **codex** synthesizer does). So **Opus 4.8 (claude) is structurally clean**, and it stays clean even if the optional Fable lens is unavailable. This is the deliberate trade: **one fewer competing author** (best-of-2, not best-of-3) **in exchange for a guaranteed independent lens** that survives degradation.
 
-> **Caveat — "independent of the implementer" cannot hold absolutely at `hard`.** The principle is stated as absolute (and holds cleanly at `low`/`medium`, where one cursor implementer leaves both other lineages free), but `hard`'s best-of-N spans **all three** lineages — so no reviewer can be independent of *every* implementer. Concretely: **Fable** is the one clean lens (it was not in the best-of-N and did not synthesize); **GPT** and **Opus** review code their own lineage also authored, so at `hard` they are cross-lineage *relative to each other* but not implementer-independent. The claude lineage deliberately splits implementer (Opus) from independent reviewer (Fable) to recover one clean lens; GPT has no such split.
+- **Why GPT synthesizes, not Opus.** The clean lens must be a lineage that didn't touch the code; if Opus (claude) ran the smart-merge it would be tainted. So at `hard` the **codex** lineage does the smart-merge — codex both authors one best-of-N attempt *and* synthesizes (mild self-judging), which the clean Opus lens is positioned to catch. (This is weaker than Opus-as-synthesizer; it is the price of a structurally-clean reviewer.)
+- **`hard ⊇ medium`.** The review is still a cross-lineage dual (Opus + GPT) — at least the **medium** scrutiny — with the structural guarantee that **Opus is the clean one**; GPT is cross-lineage but authored/synthesized. **Fable @ High** is an optional third lens (also claude-lineage, instance-independent); if it stalls, `hard` does **not** lose its clean lens (Opus already provides it).
 
 ### Effort & pinning mechanics
 - **Claude** (orchestrator/reviewer/implementer/synth): CLI flags `--model <id> --effort <low|medium|high|xhigh|max>`. IDs: Opus 4.8 = `claude-opus-4-8` (1M context: `claude-opus-4-8[1M]`); Fable 5 = `claude-fable-5`.

@@ -30,12 +30,12 @@ computed by **plain code, never an LLM call** (the LLM emits structured findings
 4. within **diff budget** (runaway detector), 5. task `risk: low`. Protected paths lock the
 **contracts and the gate itself** so an agent can't weaken its own judge.
 
-**Synthesis + cross-lineage review (the `hard` tier's mechanics — ADR-0004).** For best-of-N, the
-**smart-merge synthesizer** (model in `docs/MODELS.md`) grafts the best of the N attempts
-into one final diff. That synthesized result then gets the **medium dual review plus an added independent
-lens** (`hard` ⊇ `medium`): independent, cross-lineage skeptics, each independent of the implementer
-(models in `docs/MODELS.md`), each post a PR comment, and the orchestrator synthesizes both
-(`commands/review.md`). Reviewer veto is
+**Synthesis + cross-lineage review (the `hard` tier's mechanics — ADR-0004).** For best-of-N over **two
+lineages**, the **smart-merge synthesizer** (an authoring lineage — model in `docs/MODELS.md`) grafts the
+best of the attempts into one final diff. That synthesized result then gets the **cross-lineage dual review
+with ≥1 structurally-clean lens** (`hard` ⊇ `medium`): the third lineage is held out of authoring/synthesis
+so it is fully independent (models in `docs/MODELS.md`); reviewers each post a PR comment, and the
+orchestrator synthesizes both (`commands/review.md`). Reviewer veto is
 **blockers-only** (correctness / security / spec-violation / regression); nits are non-blocking
 follow-ups. A cheap pre-screen (Cursor) can kill obvious breakage first. Synthesis is an *authoring*
 step (**smart-merge ≠ auto-merge**); whether the resulting PR auto-merges is the orthogonal decision below.

@@ -43,9 +43,13 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    `low|medium|high|xhigh|max`; verify with `claude --help`). A Superset preset is one stored command — if
    yours can't carry these flags for this role, run the CLI directly.
 
-   > **On `hard` tasks (`hard ⊇ medium`):** add a **third** independent lens after the GPT + Opus pair —
-   > **Fable 5 @ high** (`--model claude-fable-5 --effort high`), prefix `### Review — Claude Fable 5 (claude-code, effort high)`.
-   > If Fable stalls/rate-limits, `hard` degrades to exactly this GPT + Opus dual — no separate fallback. (`docs/MODELS.md`.)
+   > **On `hard` tasks (`hard ⊇ medium`):** the same GPT + Opus pair reviews, but the **independence
+   > character differs** — at `hard`, **codex (GPT) both authored a best-of-N attempt and ran the
+   > smart-merge**, so it is cross-lineage but *not* clean; **Opus (claude) is the structurally-clean lens**
+   > (claude is held out of authoring/synthesis — ADR-0004 invariant). Optionally add **Fable 5 @ high**
+   > (`--model claude-fable-5 --effort high`, prefix `### Review — Claude Fable 5 (claude-code, effort high)`)
+   > as a third lens. **If Fable stalls, `hard` keeps its clean lens (Opus) — the guarantee does not depend
+   > on Fable.** (`docs/MODELS.md`.)
 
 4. **Synthesize (orchestrator).** Once both PR comments are posted, read both and produce one **synthesis**
    comment prefixed `### Dual-review synthesis`:
