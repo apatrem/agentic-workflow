@@ -19,7 +19,7 @@
 ## Workflow
 - Work in your own worktree on `agent/<tool>/<task>`; **never commit to `main`** (protected — PR + green CI).
 - Small PRs (< 300 lines routine; split/stack larger).
-- **Effort/review tier** per task: `mode: low | medium | hard` (default `low`; prefer low, justify higher — ADR-0004). `medium`/`hard` add an independent dual review on the PR; `hard` also runs competitive best-of-N + a smart-merge (Fable 5 @ xhigh) first.
+- **Effort/review tier** per task: `mode: low | medium | hard` (default `low`; prefer low, justify higher — ADR-0004). `medium`/`hard` add an independent cross-lineage dual review on the PR; `hard` also runs competitive best-of-N + a smart-merge first. (Which model runs each role/tier: `docs/MODELS.md`.)
 - Ship via PR → review per tier (blockers only) → **a human merges** (smart-merge ≠ auto-merge; ADR-0003).
 
 ## Review checklist

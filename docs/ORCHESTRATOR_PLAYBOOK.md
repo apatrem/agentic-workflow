@@ -56,7 +56,7 @@ Tiers per `run.md`/`review.md`: `low` → one adversarial reviewer; `medium`/pos
 
 ```bash
 codex exec --dangerously-bypass-approvals-and-sandbox - < review-prompt.txt          # GPT-lineage, xhigh from ~/.codex/config.toml
-claude -p --model claude-fable-5 --effort high --dangerously-skip-permissions < review-prompt.txt   # Claude-lineage (Fable-first, ADR-0004 Update)
+claude -p --model claude-opus-4-8 --effort xhigh --dangerously-skip-permissions < review-prompt.txt  # Claude-lineage reviewer (models: docs/MODELS.md)
 ```
 
 Pass the prompt via stdin/file to dodge argv quoting. Tell each reviewer to verify external/claimed facts itself and to run the gate.

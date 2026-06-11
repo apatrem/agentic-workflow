@@ -2,7 +2,23 @@
 
 **Status:** accepted — supersedes the original two-point dial (`mode: solo | competitive`)
 
-> **Update (2026-06-10) — Claude-lineage model policy: Fable-first, pinned by CLI flags.** All
+> **Update (2026-06-11) — model picks moved to a living table; Fable-first retired.** Supersedes the
+> 2026-06-10 Fable-first update below. The *specific model→role→tier picks* now live in **`docs/MODELS.md`**
+> (a dated table, revisited often against cursor.com/cursorbench + deepswe.datacurve.ai). This ADR keeps only
+> the durable **principle**:
+> - **Role-keyed cost ladder.** The **implementer** is the cost lever (cheap-fast by default; a premium
+>   author appears only inside `hard`'s best-of-N). Orchestrator, reviewers, and synthesizer are low-volume
+>   and quality-critical → premium, **reproducible** models. **Fable is no longer the default** — dropped for
+>   rate-limit fragility (a Fable reviewer stalled a PR mid-review), not to save tokens.
+> - **Reviewers are cross-lineage *and* independent of the implementer** (not just reviewer-vs-reviewer). With
+>   three lineages, the reviewer(s) are the lineage(s) the implementer didn't use.
+> - **"Difficult" promotes to `hard`** — no separate "stronger single implementer" knob; a task worth a
+>   premium author is worth the `hard` best-of-N.
+> - **`hard ⊇ medium` preserved** — `hard`'s review is the medium dual **plus** an added lens, degrading to
+>   the medium dual if that lens is unavailable.
+> Concrete current models are in **`docs/MODELS.md`**; the prose below points there rather than naming models.
+
+> **Update (2026-06-10 — SUPERSEDED by the 2026-06-11 update above) — Claude-lineage model policy: Fable-first, pinned by CLI flags.** All
 > Claude-lineage roles now run **Claude Fable 5**, pinned per spawn via
 > `claude --model claude-fable-5 --effort <level>` (the `ultrathink` prompt-prefix trick is retired —
 > effort is a first-class CLI flag, valid values `low|medium|high|xhigh|max`). Effort scales with the
@@ -41,21 +57,20 @@ The two axes bundled into the one dial:
 - **low (default)** — today's baseline: one implementer + the deterministic gate + one adversarial
   reviewer. The routine ~90% path.
 - **medium** — one implementer + gate, then a **dual review on every PR**: two independent reviewers of
-  different lineage each post a PR comment —
-  - **GPT-5.5 at `xhigh`** via the **codex** CLI (effort comes from `~/.codex/config.toml` `model_reasoning_effort = "xhigh"`), and
-  - **Claude Fable 5 at effort `high`** via the **claude** CLI (`--model claude-fable-5 --effort high`).
+  **different lineage**, each independent of the implementer, each post a PR comment (current models in
+  **`docs/MODELS.md`**).
 
   The orchestrator then **synthesizes both** into one verdict: agreements, disagreements, and a
   deduped, severity-ranked punch-list. **Veto is blockers-only** (correctness / security /
   spec-violation / regression); nits are advisory follow-ups. Mechanics live in `commands/review.md`.
 - **hard** — competitive best-of-N: N agents implement the **same** task in isolated worktrees across
-  lineages (Claude / Codex / Cursor — the claude worker at **Fable 5, effort `high`**), then a **smart
-  merge** — a **Fable 5 effort-`xhigh` synthesizer** grafts the best of the attempts into one diff — and
-  **then the medium dual review runs on that synthesized result**.
+  lineages (cursor / codex / claude — current models in **`docs/MODELS.md`**), then a **smart merge**
+  synthesizer grafts the best of the attempts into one diff — and **then the dual review runs on that
+  synthesized result, plus an added independent lens** (`docs/MODELS.md`; this is how `hard ⊇ medium`).
 
 ### Two refinements (load-bearing — do not drop)
-1. **`hard` ⊇ `medium`.** The synthesized winner of a `hard` run still gets the **full GPT-5.5 + Fable
-   dual review**. A `hard` task must never receive *less* scrutiny than a `medium` one; smart-merge
+1. **`hard` ⊇ `medium`.** The synthesized winner of a `hard` run still gets the **full medium dual review
+   plus an added independent lens** (`docs/MODELS.md`). A `hard` task must never receive *less* scrutiny than a `medium` one; smart-merge
    adds an authoring step on top of medium's review, it does not replace it.
 2. **smart-merge ≠ auto-merge.** "Smart merge" means *synthesizing N attempts into one best diff* — an
    **authoring** step. The PR **merge** stays **human by default** (ADR-0003). Bypassing the human
