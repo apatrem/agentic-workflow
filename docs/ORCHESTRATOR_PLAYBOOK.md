@@ -78,6 +78,15 @@ The decision behind this loop (remediator = tier implementer; excess-findings es
 
 ## 7. Cleanup after merge (engine-reliability notes)
 
-After a human merges, leave no debris: delete the Superset workspace, delete the branch (local + remote), prune the worktree, pull `main`.
+After a human merges, leave no debris: delete the Superset workspace, prune the worktree, pull `main`, and prune the merged branch — **locally and on the remote**.
+
+**Prune local branches after merging — detection is automatic.** This repo has GitHub's *Automatically delete head branches* enabled, so a merge (incl. squash) deletes the **remote** branch immediately. Locally, after `git checkout main && git pull`:
+
+```bash
+git fetch --prune                                          # drop dead remote-tracking refs
+git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -D
+```
+
+`git branch -vv` marks any local branch whose upstream was deleted as `: gone]` — after a merge that is exactly the merged-and-safe-to-delete set. **This is the detection mechanism squash otherwise lacks:** `git branch --merged` relies on commit ancestry, which squash discards (the squash commit shares no SHA with the branch), so it reports merged branches as unmerged. By contrast, the *remote* deletion from auto-delete-on-merge makes each local copy self-identify as `gone` — no ancestry check, no PR-head lookup. (Without auto-delete you'd fall back to matching a branch against its merged PR via `gh pr list --state merged --json headRefName`.)
 
 Version-pinned quirks to expect (Superset v0.2.x / v1.12.x): `workspaces delete` has returned `Error: Unexpected end of JSON input` and not deleted — re-check. On **v2**, CLI-created workspaces appear in the sidebar like any other (confirmed); the old "invisible / needs Add-to-sidebar" issue was **v1-only** (`superset-sh/superset#5083`).
