@@ -26,6 +26,8 @@
 ### `hard` review — the third lens and graceful degradation
 `hard`'s review = the **medium dual (GPT + Opus) plus Fable** as a third lens, so `hard ⊇ medium` holds by construction. **If Fable stalls or rate-limits, `hard` degrades to exactly the medium dual (GPT + Opus)** — no special fallback path. At `hard`, Opus also runs the smart-merge, so its review doubles as merge-validation; **Fable is the fully-independent lens** (it neither implemented nor synthesized).
 
+> **Caveat — "independent of the implementer" cannot hold absolutely at `hard`.** The principle is stated as absolute (and holds cleanly at `low`/`medium`, where one cursor implementer leaves both other lineages free), but `hard`'s best-of-N spans **all three** lineages — so no reviewer can be independent of *every* implementer. Concretely: **Fable** is the one clean lens (it was not in the best-of-N and did not synthesize); **GPT** and **Opus** review code their own lineage also authored, so at `hard` they are cross-lineage *relative to each other* but not implementer-independent. The claude lineage deliberately splits implementer (Opus) from independent reviewer (Fable) to recover one clean lens; GPT has no such split.
+
 ### Effort & pinning mechanics
 - **Claude** (orchestrator/reviewer/implementer/synth): CLI flags `--model <id> --effort <low|medium|high|xhigh|max>`. IDs: Opus 4.8 = `claude-opus-4-8` (1M context: `claude-opus-4-8[1M]`); Fable 5 = `claude-fable-5`.
 - **codex (GPT-5.5):** effort is read from `~/.codex/config.toml` → `model_reasoning_effort` (global, not a per-call flag). Note the per-tier split — **High** at `low`, **xHigh** at `medium`/`hard` — means setting that value for the run, or accepting one pinned effort.
