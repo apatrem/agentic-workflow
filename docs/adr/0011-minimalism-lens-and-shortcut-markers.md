@@ -29,7 +29,7 @@ nothing made the *acceptable* corners legible.
    index if it grows`. This is a "constraint the code can't show" (it survives the minimal-comment ethos),
    it travels with the code, and it is greppable.
 
-3. **An advisory minimalism *lens* on the existing reviewer** (`commands/review.md`, `commands/run.md`).
+3. **An advisory minimalism *lens* on the existing reviewer** (`skills/review/SKILL.md`, `skills/run/SKILL.md`).
    The adversarial reviewer we already run on every tier gains one dimension: produce an over-engineering
    **delete-list**, and **enforce** that every deliberate corner carries a `SHORTCUT(…)` marker (adding the
    markers the cheap author missed). The synthesis lists the SHORTCUTs a PR adds.
