@@ -20,7 +20,7 @@ One dial, two axes (authoring depth × review rigor); set per task, default `low
 
 ## Tiers — add complexity only when a trigger fires
 - **Baseline (always):** AGENTS.md, thin CLAUDE.md/.cursor rules, task template, the gate + CI required check + protected main, pre-commit, **pnpm via Corepack for new Node repos (ADR-0009)**, the rituals below. *Recommended:* codegraph + code-review-graph (navigation, **not proof**).
-- **Deferred (add when…):** Semgrep/CodeQL (security/scale) · ast-grep (codemods) · stacked PRs (large changes) · SonarQube/CodeRabbit (team).
+- **Deferred (add when…):** Semgrep/CodeQL (security/scale) · ast-grep (codemods) · stacked PRs (large changes) · SonarQube/CodeRabbit (team) · [SkillSpector](https://github.com/NVIDIA/SkillSpector) (vet a third-party skill/plugin before adopting it — the automatable form of the hand-inspection we did for Ponytail).
 - **Advanced (earned, opt-in per repo):** autonomous auto-merge — only after real CI required-checks + a Narrow→Widen rollout. Until then, **humans merge.**
 
 ## Engine
