@@ -18,7 +18,7 @@ if not isinstance(sk, list):
     print("plugin.json .skills is not a JSON array:", type(sk).__name__); sys.exit(1)
 if not all(isinstance(e, str) for e in sk):
     print("plugin.json .skills has a non-string entry"); sys.exit(1)
-entries = [e.rstrip("/") for e in sk]
+entries = list(sk)  # EXACT strings — no slash normalization (so "./skills/x///" is rejected)
 dups = sorted({e for e in entries if entries.count(e) > 1})
 listed = set(entries)
 present = {"./skills/" + n for n in os.listdir("skills") if os.path.isdir(os.path.join("skills", n))}
@@ -61,14 +61,13 @@ if ruby -ryaml -e '
   found = false
   (y["jobs"] || {}).each_value do |job|
     next unless job.is_a?(Hash)
+    next if falsy.call(job["if"])                    # job-level disable
     (job["steps"] || []).each do |s|
       next unless s.is_a?(Hash) && s["run"]
-      next if falsy.call(s["if"])
-      s["run"].to_s.each_line do |ln|
-        l = ln.strip
-        next if l.start_with?("#")                                  # comment line
-        found = true if l =~ %r{\A(bash\s+)?(\./)?tests/run\.sh(\s|\z)}  # invoked at line start
-      end
+      next if falsy.call(s["if"])                    # step-level disable
+      # require the CANONICAL invocation as the whole run body — closes echo/comment/
+      # line-continuation tricks (a wrapped/echoed command is not exactly this string).
+      found = true if s["run"].to_s.strip == "bash tests/run.sh"
     end
   end
   exit(found ? 0 : 1)
