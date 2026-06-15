@@ -9,9 +9,11 @@
 - Install / dev / format: <…>
 
 ## Coding rules
-- Smallest correct change. No new dependencies without justification.
+- **Smallest correct change, via the ladder:** needed at all? → stdlib → platform feature → already-installed dep → one line → minimal code. No unrequested abstractions; no new dependencies without justification.
+- **Minimalism has a floor** — never cut: input validation at trust boundaries, error handling that prevents data loss, security, accessibility. Reject invalid input; never auto-"fix" it — fail loudly.
+- **Mark deliberate corners** with `// SHORTCUT(<ceiling>): <upgrade path>` — e.g. `// SHORTCUT(O(n²) scan): ok <1k rows; add an index if it grows`. The reviewer enforces this; `grep -rn 'SHORTCUT('` is the running ledger (ADR-0011).
 - Preserve public APIs / contracts unless the task explicitly allows it.
-- Add or update tests for behaviour changes. Reject invalid input; never auto-"fix" it.
+- Add or update tests for behaviour changes.
 
 ## Forbidden / protected — route to a human
 - <the gate, CI config, lockfiles/deps, migrations, auth, schema/contracts, brand, secrets>
@@ -23,7 +25,7 @@
 - Ship via PR → review per tier (blockers only) → **a human merges** (smart-merge ≠ auto-merge; ADR-0003).
 
 ## Review checklist
-- Correctness · security · test coverage · backward-compat · unnecessary complexity.
+- Correctness · security · test coverage · backward-compat. **Minimalism (advisory):** over-engineering delete-list; deliberate corners marked `SHORTCUT(…)` (ADR-0011).
 
 ## Lessons → guardrails
 - Every recurring mistake becomes a test, a lint rule, or a line here — never just a mental note.

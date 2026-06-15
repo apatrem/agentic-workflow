@@ -30,6 +30,6 @@ Orchestration (worktree sessions, run agents, review diffs) = **Superset** (ADR-
 1. **Grill before code** — ambiguity dies in Phase 1 (`/agentic-workflow:architect`), not in the PR.
 2. **Deterministic gate before any AI review** — don't pay tokens to review red code.
 3. **Small-PR budget** — routine < 300 lines; split/stack larger; separate mechanical from behavioural.
-4. **Sparse review** — blockers only, ≤10 findings, ranked. AI review is an assistant, not a merge authority (it catches ~15–31% of issues).
+4. **Sparse review** — blockers only, ≤10 findings, ranked. AI review is an assistant, not a merge authority (it catches ~15–31% of issues). The reviewer also runs an **advisory minimalism lens** — over-engineering delete-list + enforce a `// SHORTCUT(<ceiling>): <upgrade>` marker on every deliberate corner (ADR-0011); the code's markers are the debt ledger (`grep -rn 'SHORTCUT('`).
 5. **Lessons → guardrails** — every recurring mistake becomes a test / lint / Semgrep / AGENTS.md rule.
 6. **Prune after merge** — GitHub auto-deletes the remote head branch on merge; locally run `git fetch --prune` then delete branches marked `: gone]` (`git branch -vv`) so nothing goes stale. Mechanism + why squash needs this: `ORCHESTRATOR_PLAYBOOK.md` §7.
