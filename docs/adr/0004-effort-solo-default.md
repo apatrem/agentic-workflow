@@ -69,7 +69,7 @@ The two axes bundled into the one dial:
 
   The orchestrator then **synthesizes both** into one verdict: agreements, disagreements, and a
   deduped, severity-ranked punch-list. **Veto is blockers-only** (correctness / security /
-  spec-violation / regression); nits are advisory follow-ups. Mechanics live in `commands/review.md`.
+  spec-violation / regression); nits are advisory follow-ups. Mechanics live in `skills/review/SKILL.md`.
 - **hard** — competitive best-of-N over **two lineages**: agents implement the **same** task in isolated
   worktrees, then a **smart-merge** synthesizer grafts the best of the attempts into one diff — and **then
   the cross-lineage dual review runs on that synthesized result**, with the guarantee that **one lens is
@@ -100,4 +100,4 @@ it wastes the vendor diversity.
 - The effort dial and the auto-merge tier (ADR-0008) are independent: any tier can run under the
   human-merge baseline (ADR-0003) or, once a repo has earned it, under auto-merge.
 - Under Superset, `hard`'s best-of-N runs as N parallel sessions and the dual review runs the reviewer
-  CLIs (see `commands/review.md` for the pinned models/effort); a human still merges by default.
+  CLIs (see `skills/review/SKILL.md` for the pinned models/effort); a human still merges by default.

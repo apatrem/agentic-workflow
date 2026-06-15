@@ -4,6 +4,7 @@ description: Phase 3 — run a task via Superset (spawn workers in worktrees); a
 argument-hint: "[tasks/<id>.md]"
 ---
 
+
 # /agentic-workflow:run
 
 The engine is **Superset** (ADR-0002 Update) — a macOS app **and** a headless **CLI / SDK / MCP server**. Each
@@ -63,7 +64,9 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    - **`low`** — one **adversarial reviewer** (≤10 ranked findings), a lineage **independent of the
      implementer** (model in **`docs/MODELS.md`**) — spawn via
      `superset agents create --workspace <ws> --agent <preset> --prompt "Review PR <pr> …"` (or run the CLI
-     directly, or review the diff yourself) and post as a PR comment; nits are advisory.
+     directly, or review the diff yourself) and post as a PR comment; nits are advisory. The reviewer also
+     runs the advisory **minimalism lens** (over-engineering delete-list + `SHORTCUT(…)` marker enforcement —
+     ADR-0011); it stays advisory, the veto is blockers-only.
    - **`medium`** / post-**`hard`** smart-merge — run `/agentic-workflow:review` on the PR (dual
      cross-lineage review).
    - If a lineage's Superset spawn is flaky (codex not starting, claude PTY stalling on the worktree

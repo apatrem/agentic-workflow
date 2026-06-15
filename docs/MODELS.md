@@ -2,7 +2,7 @@
 
 **Last reviewed: 2026-06-11.** Revisit **often** — whenever a vendor ships a new tier or the leaderboards below move. This file is the **single source for which model runs which role**; the *durable principle* behind it (role-keyed cost ladder; reviewers cross-lineage **and** independent of the implementer; "difficult" → `hard`; `hard ⊇ medium`) lives in **`docs/adr/0004-effort-solo-default.md`** and rarely changes.
 
-> **To swap a model, edit THIS file only.** `commands/run.md`, `commands/review.md`, `templates/ROLES.md`, and `docs/WORKFLOW.md` point here instead of naming models, so the policy churns in one place.
+> **To swap a model, edit THIS file only.** `skills/run/SKILL.md`, `skills/review/SKILL.md`, `templates/ROLES.md`, and `docs/WORKFLOW.md` point here instead of naming models, so the policy churns in one place.
 
 **Quality/price check — revisit these when picking models:**
 - https://cursor.com/cursorbench

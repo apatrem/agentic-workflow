@@ -19,7 +19,9 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    ```
    Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
-   advisory. Post your review as a PR comment prefixed '### Review — GPT-5.5 (codex, xhigh)' via:
+   advisory. Also run an advisory **minimalism lens** (non-blocking): a short delete-list of over-engineering,
+   and confirm each deliberate corner carries a `// SHORTCUT(<ceiling>): <upgrade>` marker — flag unmarked ones.
+   Post your review as a PR comment prefixed '### Review — GPT-5.5 (codex, xhigh)' via:
    gh pr comment <pr> --body-file <file>.
    ```
    Effort is pinned in `~/.codex/config.toml` → `model_reasoning_effort = "xhigh"` (Codex reads its effort
@@ -31,7 +33,9 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    ```
    Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
-   advisory. Post your review as a PR comment prefixed
+   advisory. Also run an advisory **minimalism lens** (non-blocking): a short delete-list of over-engineering,
+   and confirm each deliberate corner carries a `// SHORTCUT(<ceiling>): <upgrade>` marker — flag unmarked ones.
+   Post your review as a PR comment prefixed
    '### Review — Claude Opus 4.8 (claude-code, xhigh)' via: gh pr comment <pr> --body-file <file>.
    ```
    Model/effort are pinned by **CLI flags** — `--model claude-opus-4-8 --effort xhigh` (valid efforts:
@@ -51,6 +55,8 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    - **Agreements** — blockers both reviewers raised (highest priority).
    - **Disagreements** — raised by one only; adjudicate (keep if a real blocker, else mark advisory).
    - **Deduped, severity-ranked punch-list** — blockers first, then advisory nits.
+   - **SHORTCUTs this PR adds** (ADR-0011) — list the `// SHORTCUT(<ceiling>): <upgrade>` markers the diff
+     introduces (ceiling + upgrade path), so deliberate corners are visible to the human merger. Advisory.
    - **Verdict:** *blockers present → changes required* (the only veto), else *no blocker → advisory only*.
    - **Loop signals (ADR-0010)** — also state the **blocker count** and a **`systemic` flag** (is the diff
      wrong in *approach*, or just in details?). These drive whether remediation re-checks cheaply or escalates.

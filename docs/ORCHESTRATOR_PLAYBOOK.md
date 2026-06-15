@@ -1,6 +1,6 @@
 # Orchestrator playbook — the lived `/run` loop
 
-Companion to `commands/run.md`. `run.md` is the *policy* (what to spawn per tier); this is the *operational loop* an orchestrator actually executes, distilled from real runs. The engine is **Superset** (ADR-0002); commands verified against **v0.2.x** — re-check `superset --help` on upgrade, and treat the §7 reliability notes as version-pinned (they may go stale), the loop in §1–6 as durable.
+Companion to `skills/run/SKILL.md` (the `/agentic-workflow:run` skill). It is the *policy* (what to spawn per tier); this is the *operational loop* an orchestrator actually executes, distilled from real runs. The engine is **Superset** (ADR-0002); commands verified against **v0.2.x** — re-check `superset --help` on upgrade, and treat the §7 reliability notes as version-pinned (they may go stale), the loop in §1–6 as durable.
 
 ## 1. The loop
 
