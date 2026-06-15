@@ -1,3 +1,5 @@
+# /agentic-workflow:run
+
 The engine is **Superset** (ADR-0002 Update) — a macOS app **and** a headless **CLI / SDK / MCP server**. Each
 worker runs the chosen model in its own git worktree. **A human merges** by default (not an auto-merge harness).
 

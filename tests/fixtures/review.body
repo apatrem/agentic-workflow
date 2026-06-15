@@ -1,3 +1,5 @@
+# /agentic-workflow:review
+
 The **medium**-tier review (ADR-0004): an independent, **cross-lineage dual review** of a PR. Two
 reviewers of different lineage each post a PR comment; the orchestrator then synthesizes both into one
 verdict. This is also the review that runs on a `hard` task's synthesized result (`hard` ⊇ `medium`).

@@ -1,3 +1,5 @@
+# /agentic-workflow:plan
+
 Single agent + human. Turn the ADRs/CONTEXT into runnable tasks. The human sign-off here is the
 **primary control point** — nothing fans out until these are approved.
 

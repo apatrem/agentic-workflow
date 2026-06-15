@@ -1,3 +1,5 @@
+# /agentic-workflow:architect
+
 Single agent + human. **Never fans out.** Produce the contracts that make Phase 3 safe.
 
 1. Run the bundled **`grill-with-docs`** skill on the proposed design — it walks the decision tree one
