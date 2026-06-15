@@ -29,7 +29,7 @@ A per-task **effort/review dial — `mode: low | medium | hard`, default `low`**
 Claude Code · the official CLIs logged in on your subs (`claude`, `codex`, `cursor-agent`) · `gh` · [Superset](https://github.com/superset-sh/superset/releases/latest) (macOS; CLI bundled in the app) for the engine.
 
 ## Install
-Per seat (once per machine), symlink this repo's skills into your global skill dirs:
+Per seat (once per machine), symlink this repo's skills into every CLI's global skill dir (`~/.agents/skills`, `~/.codex/skills`, `~/.claude/skills`):
 
 ```bash
 bash bin/install.sh
