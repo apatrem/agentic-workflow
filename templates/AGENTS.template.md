@@ -1,5 +1,9 @@
 # AGENTS.md — <project>
 
+<!-- agentic-workflow-baseline: <highest AW-NNNN adopted, e.g. 0011> -->
+<!-- Baseline conventions are adopted BY REFERENCE: cite them `AW-NNNN` (AW-0007); this repo's own
+     docs/adr/ is for domain decisions in its own number space. Never copy a baseline ADR file in. -->
+
 ## Overview
 <what this repo is, in 2–3 sentences>
 

@@ -2,6 +2,30 @@
 
 **Status:** accepted
 
+> **Update (2026-06-15b) — baseline ADRs are adopted *by reference* (`AW-NNNN`), never copied.** The
+> Decision below lists "the ADRs" as per-repo state — but the **baseline** ADRs (the 0001–0011 in *this*
+> repo: backbone, human-merge, effort dial, remediation loop, minimalism lens, …) are central conventions,
+> and the Context above already warns that *anything copy-pasted per repo drifts*. Two real adoptions proved
+> both failure modes: **jayson-docs** copied baseline `0001`–`0009` byte-for-byte → they froze stale
+> (Composio, missing `0010`/`0011`) **and** burned its ADR number space (its first domain ADR would now
+> collide with the still-growing baseline). **jayson-editor** instead kept all of `0001`–`0023` for its
+> **own domain** decisions and adopted the baseline via a single pointer ADR — **no drift, no collision.**
+> jayson-editor's model wins. Therefore:
+> - **The baseline ADRs live only here and are cited `AW-NNNN`** (e.g. `AW-0010` = remediation loop). The
+>   `AW-` namespace makes a cross-repo citation unambiguous — bare "`ADR-0010`" means *this repo's* `0010`
+>   in one repo and a domain decision in another. Within this repo, `0010` and `AW-0010` are the same thing.
+> - **Consuming repos adopt by *reference*, not copy.** A repo keeps its `docs/adr/` for its **own domain
+>   decisions in its own number space**, and *references* `AW-NNNN` wherever a baseline convention applies
+>   (the way `jayson-editor/.../0023-adopt-agentic-workflow…` points at the pack). **No baseline ADR file is
+>   copied into a consuming repo.**
+> - **Each repo records a version stamp** — `agentic-workflow-baseline: <highest AW-NNNN adopted>` in its
+>   `AGENTS.md` — so "are we current?" is a one-line diff against this repo's max, not an archaeology dig.
+> - **Copy-adoption is retired.** A repo already on the copy model (jayson-docs) migrates: delete the copied
+>   baseline files, replace with the reference + version stamp, freeing its number space for domain ADRs.
+> This refines — does not contradict — the Decision: *domain* decisions are still genuinely per-repo; only
+> the *baseline* moves from "copied per repo" to "referenced by `AW-NNNN`," which is the no-drift invariant
+> this ADR has wanted all along.
+
 > **Update (2026-06-15) — distribution goes cross-CLI: portable `SKILL.md` skills, not a Claude-only plugin.** The original "ship as a Claude Code plugin" is narrowed to *one delivery channel among several*. The pack now targets three **Driver seats** — **Claude Code, Codex, and Cursor** (CLI or app; see `CONTEXT.md`) — because all three discover skills in the **same `SKILL.md` format** from overlapping global dirs (`~/.agents/skills`, read by Cursor globally; `~/.codex/skills`; `~/.claude/skills`). So:
 > - **Canonical source = the repo's `skills/` (`SKILL.md`).** The phase commands (`architect/plan/run/review/init`) are **converted to skills** so every invokable is portable; the two grills already are.
 > - **Distribution = an idempotent installer that *symlinks*** repo skills into the shared global dirs (`~/.agents/skills` hub → `~/.codex/skills` + `~/.claude/skills`). The repo stays the **single source**; symlinks keep every seat live with **no per-tool build and no drift** — honouring this ADR's core invariant by a *simpler* mechanism. **The installer is a shell script (`bin/install.sh`), not a setup *skill*** — symlinking is deterministic plumbing, so it is *code, never an LLM call* (idempotent via `ln -sfn`; testable in CI against a temp `$HOME`). An optional thin `setup` skill (body: *“Run `bin/install.sh`.”*) is the discoverable front door — the same shim pattern as the slash sugar. (A one-time global installer run *from* the pack is the delivery mechanism, **not** per-repo copied engine code — consistent with this ADR's "no copied scripts per repo".)
