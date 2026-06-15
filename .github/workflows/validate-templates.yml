@@ -47,3 +47,6 @@ jobs:
             fi
           done
           exit $fail
+
+      - name: Run the bash gate
+        run: bash tests/run.sh
