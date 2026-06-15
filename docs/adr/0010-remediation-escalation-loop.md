@@ -84,4 +84,4 @@ this is a cost ceiling, not a loss of safety.
 - **Terminology.** Canonical term is **remediation / remediate**; ADR-0008's "repair once" names the
   same act under the unattended tier.
 - **Operational mechanics** (prompts, spawn calls, the re-verify contract) live in
-  `docs/ORCHESTRATOR_PLAYBOOK.md` §6 and `commands/run.md`; this ADR is the durable *why*.
+  `docs/ORCHESTRATOR_PLAYBOOK.md` §6 and `skills/run/SKILL.md`; this ADR is the durable *why*.
