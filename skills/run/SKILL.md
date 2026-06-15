@@ -1,3 +1,10 @@
+---
+name: run
+description: Phase 3 — run a task via Superset (spawn workers in worktrees); a human merges
+argument-hint: "[tasks/<id>.md]"
+---
+
+
 # /agentic-workflow:run
 
 The engine is **Superset** (ADR-0002 Update) — a macOS app **and** a headless **CLI / SDK / MCP server**. Each

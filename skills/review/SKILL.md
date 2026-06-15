@@ -1,3 +1,10 @@
+---
+name: review
+description: Run the `medium` dual review on a PR — two cross-lineage reviewers (current models in docs/MODELS.md), then synthesize
+argument-hint: "[<pr-number-or-url>]"
+---
+
+
 # /agentic-workflow:review
 
 The **medium**-tier review (ADR-0004): an independent, **cross-lineage dual review** of a PR. Two

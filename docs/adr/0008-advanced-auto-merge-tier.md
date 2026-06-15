@@ -35,7 +35,7 @@ lineages**, the **smart-merge synthesizer** (an authoring lineage — model in `
 best of the attempts into one final diff. That synthesized result then gets the **cross-lineage dual review
 with ≥1 structurally-clean lens** (`hard` ⊇ `medium`): the third lineage is held out of authoring/synthesis
 so it is fully independent (models in `docs/MODELS.md`); reviewers each post a PR comment, and the
-orchestrator synthesizes both (`commands/review.md`). Reviewer veto is
+orchestrator synthesizes both (`skills/review/SKILL.md`). Reviewer veto is
 **blockers-only** (correctness / security / spec-violation / regression); nits are non-blocking
 follow-ups. A cheap pre-screen (Cursor) can kill obvious breakage first. Synthesis is an *authoring*
 step (**smart-merge ≠ auto-merge**); whether the resulting PR auto-merges is the orthogonal decision below.
