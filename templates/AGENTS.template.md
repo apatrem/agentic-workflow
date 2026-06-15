@@ -22,6 +22,7 @@
 - Work in your own worktree on `agent/<tool>/<task>`; **never commit to `main`** (protected — PR + green CI).
 - Small PRs (< 300 lines routine; split/stack larger).
 - **Effort/review tier** per task: `mode: low | medium | hard` (default `low`; prefer low, justify higher — ADR-0004). `medium`/`hard` add an independent cross-lineage dual review on the PR; `hard` also runs competitive best-of-N + a smart-merge first. (Which model runs each role/tier: `docs/MODELS.md`.)
+- **`mode` is a floor, not a ceiling:** a change touching protected/destructive surface (the *Forbidden / protected* row above — `rm -rf`/in-place rewrites, the gate/CI, lockfiles/deps, migrations, auth, public APIs) is **forced to ≥ `medium`** regardless of the declared mode (ADR-0004, refinement 3).
 - Ship via PR → review per tier (blockers only) → **a human merges** (smart-merge ≠ auto-merge; ADR-0003).
 
 ## Review checklist

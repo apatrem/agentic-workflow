@@ -2,6 +2,27 @@
 
 **Status:** accepted — supersedes the original two-point dial (`mode: solo | competitive`)
 
+> **Update (2026-06-15) — the declared `mode` is a *floor*, and risk can raise it.** The author's
+> `mode` sets a minimum, not a ceiling: a task whose change touches **protected/destructive surface**
+> runs at **≥ `medium`** regardless of what the frontmatter declares. The trigger list is the same
+> "Forbidden / protected" surface from `AGENTS.template.md` — here it *raises the review tier* rather
+> than blocking outright:
+> - destructive filesystem ops — `rm -rf`, in-place rewrites, symlink/dir replacement
+> - the gate or CI config itself
+> - lockfiles / dependency manifests
+> - migrations · schema · data-shape changes
+> - auth · secrets · security boundaries
+> - public API / contract changes
+>
+> The planner/orchestrator checks the task's *files-likely-involved* + acceptance against this list at
+> plan and at run-start; on intersection it **bumps the tier** (low→medium; medium→hard if the change is
+> also large or ambiguous) and records *"escalated by risk floor"* in the task and PR. **Why:** a real
+> run authored an installer at `low` that did `rm -rf` (T-002); the single low reviewer happened to catch
+> the data-loss bug, but the tier was mislabeled — destructive surface is medium-risk *by nature*, and the
+> right tier shouldn't depend on the author noticing. This makes the escalation **structural**, not a
+> matter of judgement, and it composes with the post-review remediation/escalation loop (ADR-0010), which
+> escalates *after* findings; this escalates *before*, on surface. See refinement 3 below.
+
 > **Update (2026-06-11) — model picks moved to a living table; Fable-first retired.** Supersedes the
 > 2026-06-10 Fable-first update below. The *specific model→role→tier picks* now live in **`docs/MODELS.md`**
 > (a dated table, revisited often against cursor.com/cursorbench + deepswe.datacurve.ai). This ADR keeps only
@@ -61,6 +82,8 @@ The two axes bundled into the one dial:
 | **medium** | 1 implementer | deterministic gate + an independent **dual review** on every PR |
 | **hard** | **competitive best-of-N** over **2 lineages** → **smart-merge** into one diff | the **medium** cross-lineage dual review, run on the synthesized result, with **≥1 structurally-clean lens** |
 
+The declared `mode` is a **floor**: protected/destructive surface forces **≥ medium** regardless (refinement 3).
+
 - **low (default)** — today's baseline: one implementer + the deterministic gate + one adversarial
   reviewer. The routine ~90% path.
 - **medium** — one implementer + gate, then a **dual review on every PR**: two independent reviewers of
@@ -78,7 +101,7 @@ The two axes bundled into the one dial:
   lineage, not the clean one (current assignment + rationale in **`docs/MODELS.md`**; this is how
   `hard ⊇ medium` *and* the independence invariant both hold).
 
-### Two refinements (load-bearing — do not drop)
+### Refinements (load-bearing — do not drop)
 1. **`hard` ⊇ `medium`, with a structurally-clean lens.** The synthesized winner of a `hard` run still gets
    a **cross-lineage dual review** — at least the **medium** scrutiny — and the invariant adds that **≥1
    reviewer is fully independent** (lineage neither authored nor synthesized). A `hard` task must never
@@ -88,6 +111,12 @@ The two axes bundled into the one dial:
    **authoring** step. The PR **merge** stays **human by default** (ADR-0003). Bypassing the human
    merge gate is the **separate, opt-in advanced tier** (ADR-0008), **orthogonal** to this effort dial.
    Choosing `mode: hard` does **not** imply auto-merge.
+3. **`mode` is a floor; risk raises it.** *(added 2026-06-15 — see Update above)* The declared tier is a
+   **minimum the author sets**, never a ceiling. A change touching protected/destructive surface
+   (`rm -rf`/in-place rewrites, the gate/CI, lockfiles/deps, migrations/schema, auth/secrets, public
+   API/contracts) is forced to **≥ `medium`** — *"prefer low, justify higher"* still holds, but some
+   surfaces remove the option of staying low. Distinct from ADR-0010: that loop escalates *reactively*
+   on excess findings; this escalates *proactively* on the surface the diff touches.
 
 **Collaborative split is still rejected:** three contracts with nothing to integrate them against, and
 it wastes the vendor diversity.
