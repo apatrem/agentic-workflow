@@ -30,8 +30,8 @@ grep_q "skills/plan/SKILL.md" "risk floor"            "skills/plan names the ris
 grep_q "skills/run/SKILL.md"  "risk floor"            "skills/run names the risk floor"
 grep_q "skills/plan/SKILL.md" "escalated by risk floor" "skills/plan emits the 'escalated by risk floor' marker"
 grep_q "skills/run/SKILL.md"  "escalated by risk floor" "skills/run emits the 'escalated by risk floor' marker"
-grep_q "skills/plan/SKILL.md" "(>=|≥) ?.?medium"      "skills/plan bumps to >= medium"
-grep_q "skills/run/SKILL.md"  "medium"                "skills/run bumps to medium"
+grep_q "skills/plan/SKILL.md" "(set it to|bump).{0,12}(>=|≥) ?.?\`?medium" "skills/plan bumps to >= medium"
+grep_q "skills/run/SKILL.md"  "bump.{0,30}medium"     "skills/run bumps to medium on the floor"
 # and it cites the canonical source by AW number
 grep_q "skills/plan/SKILL.md" "AW-0004"               "skills/plan cites AW-0004 for the floor"
 grep_q "skills/run/SKILL.md"  "AW-0004"               "skills/run cites AW-0004 for the floor"
