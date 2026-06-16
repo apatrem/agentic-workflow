@@ -9,5 +9,6 @@
       "source": "."
     }
   ],
-  "description": "Agentic-coding conventions, decisions (ADRs), and process — a Claude Code plugin that rides on an external interactive engine (currently Superset)."
+  "description": "Agentic-coding conventions, decisions (ADRs), and process — a Claude Code plugin that rides on an external interactive engine (currently Superset).",
+  "license": "MIT"
 }

@@ -5,6 +5,7 @@
   "author": {
     "name": "Pierre Supau"
   },
+  "license": "MIT",
   "commands": "./commands",
   "skills": [
     "./skills/architect",
