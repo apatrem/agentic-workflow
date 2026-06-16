@@ -21,41 +21,40 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
 1. **Pre-flight:** the PR's CI gate is **green** (don't pay tokens to review red code — WORKFLOW.md);
    `gh` authed; the CLIs (`claude` / `codex`) logged in on subscription. Note the PR number/URL.
 
-2. **Reviewer A — GPT-5.5 @ xhigh (Codex lineage).** Spawn it —
+2. **Reviewer A — Codex lineage** (concrete model + effort per `docs/MODELS.md` — the single source; not named here so it can't drift). Spawn it —
    `superset agents create --workspace ws_… --agent codex --prompt` (or run `codex` directly) — with:
    ```
    Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
    advisory. Also run an advisory **minimalism lens** (non-blocking): a short delete-list of over-engineering,
    and confirm each deliberate corner carries a `// SHORTCUT(<ceiling>): <upgrade>` marker — flag unmarked ones.
-   Post your review as a PR comment prefixed '### Review — GPT-5.5 (codex, xhigh)' via:
+   Post your review as a PR comment prefixed '### Review — Reviewer A (codex lineage)' via:
    gh pr comment <pr> --body-file <file>.
    ```
-   Effort is pinned in `~/.codex/config.toml` → `model_reasoning_effort = "xhigh"` (Codex reads its effort
-   from there, not a flag — confirm it before running).
+   Effort is read from `~/.codex/config.toml` → `model_reasoning_effort` (set it to the effort in
+   `docs/MODELS.md`; Codex reads effort from there, not a flag — confirm it before running).
 
-3. **Reviewer B — Claude Opus 4.8 @ effort `xhigh` (Claude lineage)** *(today's pick — see `docs/MODELS.md`)*. Spawn it —
+3. **Reviewer B — Claude lineage** (concrete model + effort per `docs/MODELS.md`). Spawn it —
    `superset agents create --workspace ws_… --agent claude --prompt` (or run
-   `claude --model claude-opus-4-8 --effort xhigh` directly) — with:
+   `claude --model <model> --effort <effort>` directly, both from `docs/MODELS.md`) — with:
    ```
    Review PR <pr>. Read AGENTS.md + the task's acceptance criteria. Adversarial, blockers-only
    (correctness / security / spec-violation / regression); ≤10 ranked findings; nits clearly marked
    advisory. Also run an advisory **minimalism lens** (non-blocking): a short delete-list of over-engineering,
    and confirm each deliberate corner carries a `// SHORTCUT(<ceiling>): <upgrade>` marker — flag unmarked ones.
    Post your review as a PR comment prefixed
-   '### Review — Claude Opus 4.8 (claude-code, xhigh)' via: gh pr comment <pr> --body-file <file>.
+   '### Review — Reviewer B (claude lineage)' via: gh pr comment <pr> --body-file <file>.
    ```
-   Model/effort are pinned by **CLI flags** — `--model claude-opus-4-8 --effort xhigh` (valid efforts:
-   `low|medium|high|xhigh|max`; verify with `claude --help`). A Superset preset is one stored command — if
-   yours can't carry these flags for this role, run the CLI directly.
+   Model/effort are pinned by **CLI flags** — `--model <model> --effort <effort>` from `docs/MODELS.md`
+   (valid efforts: `low|medium|high|xhigh|max`; verify with `claude --help`). A Superset preset is one stored
+   command — if yours can't carry these flags for this role, run the CLI directly.
 
-   > **On `hard` tasks (`hard ⊇ medium`):** the same GPT + Opus pair reviews, but the **independence
-   > character differs** — at `hard`, **codex (GPT) both authored a best-of-N attempt and ran the
-   > smart-merge**, so it is cross-lineage but *not* clean; **Opus (claude) is the structurally-clean lens**
-   > (claude is held out of authoring/synthesis — AW-0004 invariant). Optionally add **Fable 5 @ high**
-   > (`--model claude-fable-5 --effort high`, prefix `### Review — Claude Fable 5 (claude-code, effort high)`)
-   > as a third lens. **If Fable stalls, `hard` keeps its clean lens (Opus) — the guarantee does not depend
-   > on Fable.** (`docs/MODELS.md`.)
+   > **On `hard` tasks (`hard ⊇ medium`):** the same codex + claude pair reviews, but the **independence
+   > character differs** — at `hard`, **codex both authored a best-of-N attempt and ran the smart-merge**, so it
+   > is cross-lineage but *not* clean; **claude is the structurally-clean lens** (held out of authoring/synthesis
+   > — AW-0004 invariant). Optionally add a **third lens from a third Claude-lineage model** (see `docs/MODELS.md`;
+   > prefix `### Review — Reviewer C (claude lineage)`). **If that optional third lens stalls, `hard` keeps its
+   > clean lens (claude) — the guarantee does not depend on it.** (`docs/MODELS.md`.)
 
 4. **Synthesize (orchestrator).** Once both PR comments are posted, read both and produce one **synthesis**
    comment prefixed `### Dual-review synthesis`:
