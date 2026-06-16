@@ -1,6 +1,6 @@
 # agentic-workflow
 
-A reusable Claude Code plugin: the **conventions, planning, and decisions** for agentic coding — *not* an orchestration engine.
+A **portable agentic-coding conventions pack** — the **conventions, planning, and decisions** for agentic coding, *not* an orchestration engine. Distributed as portable **`SKILL.md` skills for Claude Code, Codex, and Cursor** (one symlink installer; ADR-0007), with an **optional Claude Code plugin** for the typed `/agentic-workflow:*` slash commands.
 
 > Backbone: **`AGENTS.md` + a deterministic gate (CI) + git/PR isolation.**
 > *LLMs propose. Tools verify. Git isolates. CI decides. Humans merge. Rules remember.*
@@ -8,6 +8,7 @@ A reusable Claude Code plugin: the **conventions, planning, and decisions** for 
 The orchestration **engine** is an **external worktree manager** — currently **[Superset](https://github.com/superset-sh/superset)** (macOS app **plus** bundled CLI / SDK / MCP at `~/.superset/bin`). It's a *pluggable slot*: swap it for another manager (e.g. Claude Squad) in one line. **You drive the loop; a human merges.** This pack is the *operating manual + scaffolder* that sits on top. (See ADR-0002 for buy-the-engine / build-the-policy and the current pick.)
 
 ## What it gives you
+*Each is a portable skill — invoke it in any seat (Claude Code, Codex, Cursor); the `/agentic-workflow:*` slash form is Claude-only sugar over the same skill.*
 - **`/agentic-workflow:init`** — scaffold the baseline conventions into any repo.
 - **`/agentic-workflow:architect`** — Phase 1: grill-with-docs → ADRs + CONTEXT (grill-me when no domain model yet).
 - **`/agentic-workflow:plan`** — Phase 2: tasks with acceptance tests, `risk`, `mode`.

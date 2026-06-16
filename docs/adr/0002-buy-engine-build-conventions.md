@@ -1,4 +1,8 @@
-# ADR 0002 — Buy the orchestration engine (Composio); build only the conventions/policy
+# ADR 0002 — Buy the orchestration engine; build only the conventions/policy
+
+> **Current engine: Superset** (the original pick, Composio, is retained below as decision history). The
+> decision is the **principle** — *buy the orchestration engine, build the conventions* — not the vendor;
+> the engine is a swappable slot (see the 2026-06 Update).
 
 **Status:** accepted — engine *pick* amended 2026-06 (**Composio → Superset**; see Update below); the
 **principle** (separate policy from engine) stands.
