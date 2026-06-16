@@ -3,25 +3,30 @@
 **Status:** accepted — supersedes the original two-point dial (`mode: solo | competitive`)
 
 > **Update (2026-06-15) — the declared `mode` is a *floor*, and risk can raise it.** The author's
-> `mode` sets a minimum, not a ceiling: a task whose change touches **protected/destructive surface**
-> runs at **≥ `medium`** regardless of what the frontmatter declares. The trigger list is the same
-> "Forbidden / protected" surface from `AGENTS.template.md` — here it *raises the review tier* rather
-> than blocking outright:
-> - destructive filesystem ops — `rm -rf`, in-place rewrites, symlink/dir replacement
-> - the gate or CI config itself
-> - lockfiles / dependency manifests
-> - migrations · schema · data-shape changes
-> - auth · secrets · security boundaries
-> - public API / contract changes
+> `mode` sets a minimum, not a ceiling: once a **destructive-or-protected change is in a task's scope**, that
+> task runs at **≥ `medium`** regardless of what the frontmatter declares.
 >
-> The planner/orchestrator checks the task's *files-likely-involved* + acceptance against this list at
-> plan and at run-start; on intersection it **bumps the tier** (low→medium; medium→hard if the change is
-> also large or ambiguous) and records *"escalated by risk floor"* in the task and PR. **Why:** a real
-> run authored an installer at `low` that did `rm -rf` (T-002); the single low reviewer happened to catch
-> the data-loss bug, but the tier was mislabeled — destructive surface is medium-risk *by nature*, and the
-> right tier shouldn't depend on the author noticing. This makes the escalation **structural**, not a
-> matter of judgement, and it composes with the post-review remediation/escalation loop (ADR-0010), which
-> escalates *after* findings; this escalates *before*, on surface. See refinement 3 below.
+> **This does not contradict `AGENTS.md`'s "Forbidden / protected — route to a human."** The two are
+> *sequential*, governing different questions: the route-to-human gate decides **whether** a protected change
+> happens at all (a worker never does it autonomously — a human authorizes it); this floor decides **at what
+> tier** it runs *once authorized*. A worker is never told both "stop" and "proceed" — it stops; if a human
+> scopes the change in, the resulting task is ≥ `medium`. The floor's own trigger is **destructive work a task
+> legitimately performs**, which is *not* limited to the route-to-human list — most often it's a destructive
+> filesystem op in a perfectly in-scope task (the `rm -rf` installer below):
+> - **destructive filesystem ops** — `rm -rf`, bulk in-place rewrites, symlink/dir replacement *(the common
+>   case — usually in-scope, not routed to a human)*
+> - a **protected** item (gate/CI, lockfiles or a dependency *added/removed/version-changed* — not a metadata
+>   touch, migrations/schema/data-shape, auth/secrets, public API/contract) **that a human has scoped into the
+>   task** *(having passed the route-to-human gate, it still can't run `low`)*
+>
+> The planner/orchestrator checks the task's *files-likely-involved* + acceptance against this at plan and at
+> run-start; on intersection it **bumps the tier** (low→medium; medium→hard if the change is also large or
+> ambiguous) and records *"escalated by risk floor"* in the task and PR. **Why:** a real run authored an
+> installer at `low` that did `rm -rf` (T-002); the single low reviewer happened to catch the data-loss bug,
+> but the tier was mislabeled — destructive surface is medium-risk *by nature*, and the right tier shouldn't
+> depend on the author noticing. This makes the escalation **structural**, not a matter of judgement, and it
+> composes with the post-review remediation/escalation loop (AW-0010), which escalates *after* findings; this
+> escalates *before*, on surface. See refinement 3 below.
 
 > **Update (2026-06-11) — model picks moved to a living table; Fable-first retired.** Supersedes the
 > 2026-06-10 Fable-first update below. The *specific model→role→tier picks* now live in **`docs/MODELS.md`**
@@ -82,7 +87,7 @@ The two axes bundled into the one dial:
 | **medium** | 1 implementer | deterministic gate + an independent **dual review** on every PR |
 | **hard** | **competitive best-of-N** over **2 lineages** → **smart-merge** into one diff | the **medium** cross-lineage dual review, run on the synthesized result, with **≥1 structurally-clean lens** |
 
-The declared `mode` is a **floor**: protected/destructive surface forces **≥ medium** regardless (refinement 3).
+The declared `mode` is a **floor**: a destructive-or-protected change *in a task's scope* forces **≥ medium** regardless — sequential with, not contradicting, the route-to-human gate (refinement 3 + the 2026-06-15 Update).
 
 - **low (default)** — today's baseline: one implementer + the deterministic gate + one adversarial
   reviewer. The routine ~90% path.
@@ -112,11 +117,13 @@ The declared `mode` is a **floor**: protected/destructive surface forces **≥ m
    merge gate is the **separate, opt-in advanced tier** (ADR-0008), **orthogonal** to this effort dial.
    Choosing `mode: hard` does **not** imply auto-merge.
 3. **`mode` is a floor; risk raises it.** *(added 2026-06-15 — see Update above)* The declared tier is a
-   **minimum the author sets**, never a ceiling. A change touching protected/destructive surface
-   (`rm -rf`/in-place rewrites, the gate/CI, lockfiles/deps, migrations/schema, auth/secrets, public
-   API/contracts) is forced to **≥ `medium`** — *"prefer low, justify higher"* still holds, but some
-   surfaces remove the option of staying low. Distinct from ADR-0010: that loop escalates *reactively*
-   on excess findings; this escalates *proactively* on the surface the diff touches.
+   **minimum the author sets**, never a ceiling. Once a destructive-or-protected change is *in a task's
+   scope* (`rm -rf`/bulk in-place rewrites; or a route-to-human item — gate/CI, lockfiles/deps,
+   migrations/schema, auth/secrets, public API/contracts — that a human has scoped in), the task is forced
+   to **≥ `medium`** — *"prefer low, justify higher"* still holds, but some surfaces remove the option of
+   staying low. This is **sequential with** `AGENTS.md`'s route-to-human gate (whether vs at-what-tier; see
+   Update), not in conflict with it. Distinct from AW-0010: that loop escalates *reactively* on excess
+   findings; this escalates *proactively* on the surface the diff touches.
 
 **Collaborative split is still rejected:** three contracts with nothing to integrate them against, and
 it wastes the vendor diversity.

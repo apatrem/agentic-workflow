@@ -1,4 +1,4 @@
-<!-- Optional block — paste into the target repo's CLAUDE.md and AGENTS.md. Superset + PR model (ADR-0002 Update). -->
+<!-- Optional block — paste into the target repo's CLAUDE.md and AGENTS.md. Superset + PR model (AW-0002 Update). -->
 
 # Multi-agent git rules
 
