@@ -16,5 +16,11 @@ Single agent + human. **Never fans out.** Produce the contracts that make Phase 
    step, use the house ADR format — Context / Decision / Consequences with a `Status:` line** — which
    takes precedence over the skill's lighter default `ADR-FORMAT.md`.
 3. **The human signs off each ADR.** These ADRs define the protected contracts — record them in `AGENTS.md`'s forbidden/protected section.
+4. **Governance changes are `medium` by default (AW-0004 risk floor).** Amendments to the decision record or
+   conventions — `docs/adr/*`, `CONTEXT.md`, the `AGENTS.md` conventions, or this pack's own skills/templates —
+   are high-blast-radius and have repeatedly shipped incoherent when authored solo. **Ship them via PR with a
+   cross-lineage review before a human merges**, even when you author them directly (no worker spawn, so no
+   `mode` field — `medium` here *is* "PR + cross-lineage dual review first"). Routine prose (typos, examples,
+   comments) is not governance and stays `low`.
 
 Output: committed `docs/adr/*` + `CONTEXT.md`. Stop when the design tree is resolved.

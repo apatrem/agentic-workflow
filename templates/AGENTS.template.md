@@ -29,7 +29,7 @@
 - Work in your own worktree on `agent/<tool>/<task>`; **never commit to `main`** (protected — PR + green CI).
 - Small PRs (< 300 lines routine; split/stack larger).
 - **Effort/review tier** per task: `mode: low | medium | hard` (default `low`; prefer low, justify higher — AW-0004). `medium`/`hard` add an independent cross-lineage dual review on the PR; `hard` also runs competitive best-of-N + a smart-merge first. (Which model runs each role/tier: `docs/MODELS.md`.)
-- **`mode` is a floor, not a ceiling:** once a destructive-or-protected change *is* in a task's scope — destructive fs ops (`rm -rf`/bulk in-place rewrites) the task inherently performs, or a *Forbidden / protected* item a human has explicitly scoped in — that task runs at **≥ `medium`** regardless of the declared mode (AW-0004, refinement 3). The route-to-human gate above decides *whether*; this floor decides *at what tier*. They are sequential, not in conflict.
+- **`mode` is a floor, not a ceiling:** once a destructive-or-protected change *is* in a task's scope — destructive fs ops (`rm -rf`/bulk in-place rewrites) the task inherently performs, a *Forbidden / protected* item a human has explicitly scoped in, or a **governance / decision-record change** (this repo's `docs/adr/*`, `CONTEXT.md`, or `AGENTS.md` conventions — not routine prose) — that task runs at **≥ `medium`** regardless of the declared mode (AW-0004, refinement 3). The route-to-human gate above decides *whether*; this floor decides *at what tier*. They are sequential, not in conflict.
 - Ship via PR → review per tier (blockers only) → **a human merges** (smart-merge ≠ auto-merge; AW-0003).
 
 ## Review checklist
