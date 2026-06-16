@@ -6,11 +6,13 @@
 
 We evaluated [Ponytail](https://github.com/DietrichGebert/ponytail) — a popular (MIT) rule-pack that pushes
 agents toward minimal code ("lazy senior developer": YAGNI → stdlib → platform → existing dep → one-liner →
-minimal). We **did not adopt the plugin**: it ships session lifecycle hooks that inject behaviour from
-*outside* the repo, which conflicts with ADR-0001 (rules live in `AGENTS.md`, committed and verifiable, not
-in the harness), and most of its thesis already lives in our conventions (`ROLES.md` "smallest diff", "no new
-dependencies", the small-PR ritual). But three of its ideas filled real gaps, so we imported the *content*,
-not the tool.
+minimal). Ponytail is **hybrid**: it ships *both* a plugin/hooks delivery path **and** a committed
+`AGENTS.md` rules-file path. We **declined the plugin/hooks delivery channel — not Ponytail wholesale**: the
+hooks inject behaviour from *outside* the repo, which conflicts with ADR-0001 (rules live in `AGENTS.md`,
+committed and verifiable, not in the harness). What we adopted is the content of Ponytail's *own committed
+rules-file mode*, re-authored into `AGENTS.template.md` — so this is choosing Ponytail's in-repo channel over
+its harness channel, plus filling three real gaps. (Most of its thesis already lived in our conventions —
+`ROLES.md` "smallest diff", "no new dependencies", the small-PR ritual.) We imported the *content*, not the tool.
 
 The gap: in a workflow where a cheap implementer writes minimal diffs by default, **deliberate corner-cutting
 is invisible** to the human merger — they can't tell "naive on purpose, here's the ceiling" from "naive
@@ -58,5 +60,10 @@ nothing made the *acceptable* corners legible.
   plugin), respects ADR-0004's blockers-only veto, and reuses the single-source discipline behind
   `docs/MODELS.md`. Distinct from the **lessons → guardrails** ritual, which tracks *mistakes*; this tracks
   *deliberate* shortcuts.
-- **Not imported from Ponytail:** the modes dial (collides with our effort dial), the statusline, the
-  benchmarks, and the plugin/hooks themselves.
+- **Not imported from Ponytail:** the modes dial, the statusline, the benchmarks, and the plugin/hooks
+  themselves. On the modes dial specifically: Ponytail's modes are an *intensity-of-minimalism* axis
+  (`lite | full | ultra`, where `ultra` "deletes before adding, may reject the task"); our `mode` is an
+  *effort/review-rigor* axis (AW-0004). The two are **orthogonal**, not the same knob — so we skip Ponytail's
+  dial for two precise reasons: (a) a **naming collision** on "mode," and (b) we **deliberately fixed our
+  minimalism posture** (ladder + floor, always-on, one advisory lens) rather than making it tunable — a fixed
+  floor is more predictable than a per-task intensity setting.

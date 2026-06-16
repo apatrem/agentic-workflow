@@ -1,6 +1,6 @@
 ---
 name: run
-description: Phase 3 — run a task via Superset (spawn workers in worktrees); a human merges
+description: Phase 3 — run a task via Superset (spawn workers in worktrees); a human merges. Use when tasks are planned and human-approved and you're ready to implement them — spawn workers per tier, gate, review, remediate, then a human merges.
 argument-hint: "[tasks/<id>.md]"
 ---
 

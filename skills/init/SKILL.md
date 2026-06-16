@@ -1,6 +1,6 @@
 ---
 name: init
-description: Scaffold the baseline agentic-coding conventions into the current repo
+description: Scaffold the baseline agentic-coding conventions into the current repo. Use when adopting agentic-workflow into a repo that doesn't have AGENTS.md + the gate + templates yet, or to refresh that scaffolding.
 ---
 
 # /agentic-workflow:init

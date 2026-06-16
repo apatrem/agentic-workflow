@@ -20,6 +20,7 @@
 - **Mark deliberate corners** with `// SHORTCUT(<ceiling>): <upgrade path>` — e.g. `// SHORTCUT(O(n²) scan): ok <1k rows; add an index if it grows`. The reviewer enforces this; `grep -rn 'SHORTCUT('` is the running ledger (AW-0011).
 - Preserve public APIs / contracts unless the task explicitly allows it.
 - Add or update tests for behaviour changes.
+- **One runnable check behind non-trivial logic** (from Ponytail) — anything with branching/edge cases leaves at least one test or assertion that would fail if it broke. Frozen acceptance tests cover the *contract*; this covers the *internals* a minimal diff is tempted to leave unguarded.
 
 ## Forbidden / protected — route to a human
 - <the gate, CI config, lockfiles/deps, migrations, auth, schema/contracts, brand, secrets>

@@ -1,6 +1,6 @@
 ---
 name: review
-description: Run the `medium` dual review on a PR — two cross-lineage reviewers (current models in docs/MODELS.md), then synthesize
+description: Run the `medium` dual review on a PR — two cross-lineage reviewers (current models in docs/MODELS.md), then synthesize. Use when a PR (mode medium or hard) needs the independent cross-lineage dual review and a synthesized blockers-only punch-list before a human merges.
 argument-hint: "[<pr-number-or-url>]"
 ---
 
