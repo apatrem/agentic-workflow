@@ -7,10 +7,10 @@ argument-hint: "[<pr-number-or-url>]"
 
 # /agentic-workflow:review
 
-The **medium**-tier review (ADR-0004): an independent, **cross-lineage dual review** of a PR. Two
+The **medium**-tier review (AW-0004): an independent, **cross-lineage dual review** of a PR. Two
 reviewers of different lineage each post a PR comment; the orchestrator then synthesizes both into one
 verdict. This is also the review that runs on a `hard` task's synthesized result (`hard` ⊇ `medium`).
-Veto is **blockers-only**; nits are advisory. **This does not merge** — a human merges by default (ADR-0003).
+Veto is **blockers-only**; nits are advisory. **This does not merge** — a human merges by default (AW-0003).
 
 > Reviewer models/effort are **pinned** so the review is reproducible — **current picks live in
 > `docs/MODELS.md`** (single source; this command names today's defaults inline but `MODELS.md` wins).
@@ -52,7 +52,7 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    > **On `hard` tasks (`hard ⊇ medium`):** the same GPT + Opus pair reviews, but the **independence
    > character differs** — at `hard`, **codex (GPT) both authored a best-of-N attempt and ran the
    > smart-merge**, so it is cross-lineage but *not* clean; **Opus (claude) is the structurally-clean lens**
-   > (claude is held out of authoring/synthesis — ADR-0004 invariant). Optionally add **Fable 5 @ high**
+   > (claude is held out of authoring/synthesis — AW-0004 invariant). Optionally add **Fable 5 @ high**
    > (`--model claude-fable-5 --effort high`, prefix `### Review — Claude Fable 5 (claude-code, effort high)`)
    > as a third lens. **If Fable stalls, `hard` keeps its clean lens (Opus) — the guarantee does not depend
    > on Fable.** (`docs/MODELS.md`.)
@@ -62,17 +62,17 @@ Veto is **blockers-only**; nits are advisory. **This does not merge** — a huma
    - **Agreements** — blockers both reviewers raised (highest priority).
    - **Disagreements** — raised by one only; adjudicate (keep if a real blocker, else mark advisory).
    - **Deduped, severity-ranked punch-list** — blockers first, then advisory nits.
-   - **SHORTCUTs this PR adds** (ADR-0011) — list the `// SHORTCUT(<ceiling>): <upgrade>` markers the diff
+   - **SHORTCUTs this PR adds** (AW-0011) — list the `// SHORTCUT(<ceiling>): <upgrade>` markers the diff
      introduces (ceiling + upgrade path), so deliberate corners are visible to the human merger. Advisory.
    - **Verdict:** *blockers present → changes required* (the only veto), else *no blocker → advisory only*.
-   - **Loop signals (ADR-0010)** — also state the **blocker count** and a **`systemic` flag** (is the diff
+   - **Loop signals (AW-0010)** — also state the **blocker count** and a **`systemic` flag** (is the diff
      wrong in *approach*, or just in details?). These drive whether remediation re-checks cheaply or escalates.
 
-5. **Hand back — remediate if blockers (ADR-0010).** No blockers → the synthesis is advisory and **the human
-   merges** (ADR-0003). Blockers → `/agentic-workflow:run` drives the **remediation loop**: the tier's
+5. **Hand back — remediate if blockers (AW-0010).** No blockers → the synthesis is advisory and **the human
+   merges** (AW-0003). Blockers → `/agentic-workflow:run` drives the **remediation loop**: the tier's
    implementer fixes the punch-list, then a **targeted re-verify** by default — or, if findings are excessive
    (count ≥ the tier's *N*, `systemic`, or the fix ballooned), **escalate one tier + a full re-review**, capped
-   at **3 rounds** → else `needs-human`. Auto-merge is the separate advanced tier (ADR-0008) — not triggered here.
+   at **3 rounds** → else `needs-human`. Auto-merge is the separate advanced tier (AW-0008) — not triggered here.
 
 > For a `hard` task: run `/agentic-workflow:run` to do the competitive best-of-N + smart-merge (synthesizer
 > in `docs/MODELS.md`), open the PR, **then run this command** on that PR (and add the third `hard` lens above).

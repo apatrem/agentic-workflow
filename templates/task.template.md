@@ -19,12 +19,12 @@
 - <protected contract this task must not change>
 
 ## Meta
-- mode: low             # low (default) | medium | hard — effort/review dial (ADR-0004); prefer low, justify higher
+- mode: low             # low (default) | medium | hard — effort/review dial (AW-0004); prefer low, justify higher
                         #   low    = 1 implementer + gate + 1 adversarial reviewer
                         #   medium = + independent cross-lineage dual review on the PR → synthesis
                         #   hard   = best-of-N over 2 lineages + smart-merge, THEN the dual review w/ ≥1 structurally-clean lens (hard ⊇ medium)
                         #   (which model runs each role/tier: docs/MODELS.md)
-- risk: low             # low | high — high if acceptance can't be a runnable test (never auto-merge eligible, ADR-0008)
+- risk: low             # low | high — high if acceptance can't be a runnable test (never auto-merge eligible, AW-0008)
 - depends-on: []        # task ids that must be merged first
 - parallel-safe: yes    # yes | no — can run concurrently with the other pending tasks (disjoint file set,
                         # no shared contract). /run spawns parallel-safe tasks concurrently, one worktree each.

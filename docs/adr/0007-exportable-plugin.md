@@ -3,9 +3,10 @@
 **Status:** accepted
 
 > **Update (2026-06-15b) — baseline ADRs are adopted *by reference* (`AW-NNNN`), never copied.** The
-> Decision below lists "the ADRs" as per-repo state — but the **baseline** ADRs (the 0001–0011 in *this*
-> repo: backbone, human-merge, effort dial, remediation loop, minimalism lens, …) are central conventions,
-> and the Context above already warns that *anything copy-pasted per repo drifts*. Two real adoptions proved
+> Decision below lists "the ADRs" as per-repo state — but the **baseline** ADRs (in *this* repo:
+> `0001`–`0007` + `0009`–`0011` — backbone, human-merge, effort dial, remediation loop, minimalism lens, …;
+> `0008`, the auto-merge tier, is **opt-in** and adopted separately, per the README index) are central conventions,
+> and the Context section below already warns that *anything copy-pasted per repo drifts*. Two real adoptions proved
 > both failure modes: **jayson-docs** copied baseline `0001`–`0009` byte-for-byte → they froze stale
 > (Composio, missing `0010`/`0011`) **and** burned its ADR number space (its first domain ADR would now
 > collide with the still-growing baseline). **jayson-editor** instead kept all of `0001`–`0023` for its
@@ -18,8 +19,12 @@
 >   decisions in its own number space**, and *references* `AW-NNNN` wherever a baseline convention applies
 >   (the way `jayson-editor/.../0023-adopt-agentic-workflow…` points at the pack). **No baseline ADR file is
 >   copied into a consuming repo.**
-> - **Each repo records a version stamp** — `agentic-workflow-baseline: <highest AW-NNNN adopted>` in its
->   `AGENTS.md` — so "are we current?" is a one-line diff against this repo's max, not an archaeology dig.
+> - **Each repo records a version stamp** — `agentic-workflow-baseline: <pack version>` (e.g. `v0.3.7`, from
+>   the pack's `plugin.json`) in its `AGENTS.md`. It is a pack **version, not an ADR ordinal**: baseline ADRs
+>   are amended *in place* (e.g. `AW-0004` gained refinement 3 without changing its number), so a max-ordinal
+>   like "0011" can't tell "adopted before vs after that amendment," nor flag a reference to an `AW-` ADR that
+>   didn't exist at the pinned revision. A version (or commit) pins the actual text; "are we current?" = compare
+>   to the pack's current `plugin.json` version.
 > - **Copy-adoption is retired.** A repo already on the copy model (jayson-docs) migrates: delete the copied
 >   baseline files, replace with the reference + version stamp, freeing its number space for domain ADRs.
 > This refines — does not contradict — the Decision: *domain* decisions are still genuinely per-repo; only
