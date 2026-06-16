@@ -18,6 +18,18 @@
 > - a **protected** item (gate/CI, lockfiles or a dependency *added/removed/version-changed* — not a metadata
 >   touch, migrations/schema/data-shape, auth/secrets, public API/contract) **that a human has scoped into the
 >   task** *(having passed the route-to-human gate, it still can't run `low`)*
+> - **governance / decision-record surface** — the **decision record and conventions themselves**: `docs/adr/*`,
+>   `CONTEXT.md`, the `AGENTS.md` conventions, and (for this pack) its own `skills/`/`templates/`. This includes
+>   **`docs/MODELS.md`'s role→model/tier *assignments*** — a model swap changes how *every* task runs, so the
+>   assignment change is governance; the table is otherwise designed to churn, so routine maintenance (benchmark
+>   links, the *Last reviewed* date, leaderboard prose) stays `low`. *Why:* these
+>   are high-blast-radius — they change how *every* task is run — and have repeatedly shipped **incoherent when
+>   authored solo and merged fast** (this session alone, three cross-lineage review rounds caught real
+>   contradictions in solo-authored amendments that green tests missed). A cross-lineage review *before* merge
+>   is the cheapest guard. Governance edits are usually made **directly** (no `tasks/*.md`, so no `mode` field) —
+>   "`medium`" here means *ship via PR with the cross-lineage dual review before a human merges*. **Boundary:**
+>   only the decision record / conventions count — routine prose (typos, examples, comments, a feature README)
+>   is **not** governance and stays `low`.
 >
 > The planner/orchestrator checks the task's *files-likely-involved* + acceptance against this at plan and at
 > run-start; on intersection it **bumps the tier** (low→medium; medium→hard if the change is also large or
@@ -118,12 +130,15 @@ The declared `mode` is a **floor**: a destructive-or-protected change *in a task
    Choosing `mode: hard` does **not** imply auto-merge.
 3. **`mode` is a floor; risk raises it.** *(added 2026-06-15 — see Update above)* The declared tier is a
    **minimum the author sets**, never a ceiling. Once a destructive-or-protected change is *in a task's
-   scope* (`rm -rf`/bulk in-place rewrites; or a route-to-human item — gate/CI, lockfiles/deps,
-   migrations/schema, auth/secrets, public API/contracts — that a human has scoped in), the task is forced
-   to **≥ `medium`** — *"prefer low, justify higher"* still holds, but some surfaces remove the option of
-   staying low. This is **sequential with** `AGENTS.md`'s route-to-human gate (whether vs at-what-tier; see
-   Update), not in conflict with it. Distinct from AW-0010: that loop escalates *reactively* on excess
-   findings; this escalates *proactively* on the surface the diff touches.
+   scope* (`rm -rf`/bulk in-place rewrites; a route-to-human item — gate/CI, lockfiles/deps,
+   migrations/schema, auth/secrets, public API/contracts — that a human has scoped in; **or a governance /
+   decision-record change** — `docs/adr/*`, `CONTEXT.md`, `docs/MODELS.md` role assignments, the
+   conventions/skills/templates themselves), the
+   task is forced to **≥ `medium`** — *"prefer low, justify higher"* still holds, but some surfaces remove the
+   option of staying low. (Routine prose stays `low`; only the decision record / conventions are governance.)
+   This is **sequential with** `AGENTS.md`'s route-to-human gate (whether vs at-what-tier; see Update), not in
+   conflict with it. Distinct from AW-0010: that loop escalates *reactively* on excess findings; this escalates
+   *proactively* on the surface the diff touches.
 
 **Collaborative split is still rejected:** three contracts with nothing to integrate them against, and
 it wastes the vendor diversity.

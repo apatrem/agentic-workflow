@@ -30,7 +30,7 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    authed; the task's `depends-on` already merged. Register the repo once:
    `superset projects create --local --clone <url>` (returns a `prj_…` id).
 2. **Spawn the worker(s)** per the task's **`mode`** (AW-0004) — each gets its own worktree + the right model.
-   **Enforce the risk floor before spawning:** if the task's *Files likely involved* / acceptance touch destructive-or-protected surface scoped in by a human (destructive fs ops, gate/CI, lockfiles/deps, migrations, auth, public APIs) but its `mode` is `low`, bump to **`medium`** and note *"escalated by risk floor"* on the PR (AW-0004 refinement 3) — don't spawn a `low` run on that surface.
+   **Enforce the risk floor before spawning:** if the task's *Files likely involved* / acceptance touch destructive-or-protected surface scoped in by a human (destructive fs ops, gate/CI, lockfiles/deps, migrations, auth, public APIs) — or **governance / decision-record surface** (`docs/adr/*`, `CONTEXT.md`, `docs/MODELS.md` role→model assignments, the conventions/skills/templates; routine prose and `MODELS.md` benchmark/date upkeep stay `low`) — and its `mode` is below the floor, **bump it** (`low`→`medium`; `medium`→`hard` if the change is also large or ambiguous) and note *"escalated by risk floor"* on the PR (AW-0004 refinement 3) — don't spawn a `low` run on that surface.
    Create-and-spawn in one call (wrap the task file in an orchestrator preamble — playbook §2 — never pass it bare):
    ```
    # verified against superset v0.2.19 — confirm with `superset --help`
