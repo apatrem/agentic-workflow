@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Phase 2 — decompose into tasks with frozen tests, risk, and mode
+description: Phase 2 — decompose into tasks with frozen tests, risk, and mode. Use when the architecture/ADRs are agreed and you need to break the work into small, independently reviewable tasks with acceptance tests before implementation.
 ---
 
 # /agentic-workflow:plan

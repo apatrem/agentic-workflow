@@ -1,6 +1,6 @@
 ---
 name: architect
-description: Phase 1 — establish architecture & ADRs via an interactive grilling session
+description: Phase 1 — establish architecture & ADRs via an interactive grilling session. Use when starting a new project or feature, or amending architecture, and you need to settle and record durable decisions (ADRs + CONTEXT.md) before any code.
 ---
 
 # /agentic-workflow:architect
