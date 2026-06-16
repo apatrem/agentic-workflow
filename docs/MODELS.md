@@ -18,6 +18,8 @@
 
 **Orchestrator** (drives `/run`, `/review`, synthesizes the review verdict) = **Claude Opus 4.8 [1M] @ High**. **At `hard` the orchestrator does *not* perform the smart-merge itself** — that is delegated to a spawned **codex** synthesizer (above), so the **claude** lineage neither authors nor synthesizes and stays the structurally-clean reviewer (see the invariant below). The orchestrator coordinating the run (spawning, gating, opening the PR, synthesizing *review comments*) is not code-authoring and does not taint that cleanliness.
 
+**Architect / grilling** (Phase 1–2 in the Driver seat — `/architect`, `grill-with-docs`, `/plan`) = a **frontier model**, same calibre as the orchestrator (**Opus 4.8 @ High** today) — **never the cheap implementer**. Grilling and planning are the **parametric-knowledge** phase: they lean on the model's trained judgment and creative challenge, where a frontier model pays off. Implementation is the **contextual-knowledge** phase — the spec is already rich — so the cheap implementer suffices. (This is the same split as the cost ladder below; external corroboration: Pocock's grill-me/grill-with-docs analysis, aihero.dev.)
+
 **Remediator** (fixes review blockers — ADR-0010) = **the tier's implementer**: `low`/`medium` → Composer 2.5 fast *(cursor)*; `hard` → the **winning best-of-N lineage**. Fresh spawn on the same branch, prompt = the synthesis punch-list, commit-don't-push.
 
 **Excess-findings threshold *N*** (blocker count that escalates a tier + forces a full re-review — ADR-0010 §3): **low: 3 · medium: 4 · hard: 5** *(tune with experience; the `systemic` and `ballooned` judgment triggers fire regardless of count)*.

@@ -10,6 +10,8 @@ spawn → monitor → verify → PR → review → synthesize → remediate → 
 
 The orchestrator stays in its own thread and never implements or reviews inline — it spawns workers, then inspects, gates, and PRs their output. **One *authoring* worker = one workspace = one worktree = one branch** — that maps the implementer (and, at `hard`, each best-of-N candidate) 1:1 to a branch. **Reviewers and the remediator are *added into* an existing authoring workspace, not given their own** (`agents create --workspace <ws>`); they don't get a fresh branch. So a single `low`/`medium` workspace hosts the implementer, then the reviewer(s), then (if needed) the remediator — several agents, one branch.
 
+**Why this shape — context-rot.** Each worker starts on a **fresh context** scoped to its one task (the full task text in the prompt, `AGENTS.md` as the source of truth); the orchestrator stays thin and **never accumulates implementation context** across tasks. Long, ever-growing context degrades (the ~120k-token "dumb zone"), so worktree-per-worker + a thin orchestrator is how this loop keeps every agent sharp — the same fresh-context discipline grilling uses in Phase 1 by chunking the scope (`skills/architect`).
+
 ## 2. Spawn — what actually works
 
 **Two-step, not one** — the canonical sequence (confirmed first-try for **all three lineages**: cursor, claude, codex). Create the workspace first (its worktree + setup hook run), *then* add the agent into the ready workspace:

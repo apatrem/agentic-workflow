@@ -20,3 +20,7 @@ spec; you do **not** fan out the spec.
 - Cheap, high-leverage human judgment is concentrated where it matters; the loop runs autonomously after.
 - Competition is reserved for implementation, where diversity pays and a gate exists one level up.
 - Three agents writing three architectures (no gate above them) is explicitly rejected.
+- **"Architect never fans out" = no *competitive authoring of one architecture*** — it does **not** forbid a
+  human running several *independent* grilling sessions concurrently on **separate** features/scopes
+  (concurrency across specs, not competition on one spec). That's a Driver-seat throughput technique, not
+  fan-out, and it's fine.

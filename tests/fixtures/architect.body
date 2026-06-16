@@ -2,6 +2,20 @@
 
 Single agent + human. **Never fans out.** Produce the contracts that make Phase 3 safe.
 
+**Grilling is a bounded, high-signal decision-discovery phase — run it well:**
+- **Chunk the scope first.** Split large work into smaller grillable slices and grill each separately; one
+  oversized session hides high-fidelity questions and pushes the model into context-rot (the ~120k-token
+  "dumb zone"). Same fresh-context discipline the orchestrator uses in Phase 3.
+- **Low- vs high-fidelity.** Grilling settles *low-fidelity* decisions (data shapes, trade-offs, conventions,
+  interfaces). A *high-fidelity* question — UI feel, ergonomics, runtime behaviour — can't be answered by
+  discussion: **spike a throwaway prototype, then grill against it.** Don't force an ADR out of a question
+  grilling can't settle.
+- **Stop when the next useful step is to build.** Over-grilling is its own over-engineering — stop when the
+  design tree is resolved, or when the remaining questions need higher fidelity (prototype), then freeze tests
+  and implement.
+- **Use a frontier model in the Driver seat** — grilling/planning is the *parametric-knowledge* phase
+  (`docs/MODELS.md`), not the cheap implementer.
+
 1. Run the bundled **`grill-with-docs`** skill on the proposed design — it walks the decision tree one
    branch at a time (each with a recommended answer, resolving dependencies), challenges the plan
    against the existing `CONTEXT.md` and ADRs, and captures decisions to docs *inline* as they
