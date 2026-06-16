@@ -27,13 +27,16 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
    Spawn in **two steps — the reliable default** (the one-call form can race; playbook §2). Wrap the task file in an orchestrator preamble — never pass it bare:
    ```
    # verified against superset v0.2.19 — confirm with `superset --help`
-   # 1) create the worktree (add --quiet for just the workspace id; --base-branch defaults to project default)
-   superset workspaces create --local --project prj_… --name <task> --branch agent/<lineage>/<task>
-   # 2) spawn the agent into it
-   superset agents create --workspace <ws> --agent <lineage> --prompt "$(cat /tmp/<task>-prompt.txt)"
+   # 1) create the worktree WITHOUT --agent, capturing its id (--quiet prints just the workspace id;
+   #    --base-branch defaults to the project default)
+   ws=$(superset workspaces create --local --project prj_… --name <task> \
+        --branch agent/<lineage>/<task> --quiet)
+   # 2) spawn the agent into the ready workspace. <lineage> maps to a Superset preset id —
+   #    cursor → cursor-agent, codex → codex, claude → claude (confirm with `superset agents list`).
+   superset agents create --workspace "$ws" --agent <preset> --prompt "$(cat /tmp/<task>-prompt.txt)"
    # Optional shortcut — one call, fine when it lands; if the agent doesn't materialize (silent race),
    # fall back to the two steps above:
-   #   superset workspaces create … --agent <lineage> --prompt "$(cat /tmp/<task>-prompt.txt)"
+   #   superset workspaces create … --agent <preset> --prompt "$(cat /tmp/<task>-prompt.txt)"
    ```
    - **`low`** *(default)* — one worker, lineage **cursor** (Cursor Composer) + the gate + one adversarial reviewer.
    - **`medium`** — one worker, then the dual review on the PR → `/agentic-workflow:review`.

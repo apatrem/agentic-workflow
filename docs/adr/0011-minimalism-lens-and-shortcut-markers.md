@@ -25,6 +25,9 @@ nothing made the *acceptable* corners legible.
    The "smallest correct change" rule becomes an explicit ladder (*needed at all? → stdlib → platform →
    installed dep → one line → minimal code*), paired with a **floor**: minimalism never cuts input
    validation at trust boundaries, error handling that prevents data loss, security, or accessibility.
+   Also adopted from Ponytail (2026-06-16): **"non-trivial logic leaves one runnable check"** — a coding rule
+   in `AGENTS.template.md` that guards the *internals* a minimal diff is tempted to leave untested, complementing
+   the frozen *acceptance* tests that guard the contract.
 
 2. **`// SHORTCUT(<ceiling>): <upgrade path>` markers.** Each deliberate simplification is marked inline,
    naming the known ceiling **and** the upgrade path — e.g. `// SHORTCUT(O(n²) scan): ok <1k rows; add an
