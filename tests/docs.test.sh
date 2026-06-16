@@ -16,10 +16,12 @@ if head -4 README.md | grep -qiE '^a reusable claude code plugin'; then
 else
   ok "README headline is not the old Claude-only framing"
 fi
-grep_q .claude-plugin/marketplace.json "Codex|Cursor|portable" "marketplace.json description carries cross-CLI framing"
+grep_q .claude-plugin/marketplace.json "Codex" "marketplace.json names Codex (cross-CLI framing)"
+grep_q .claude-plugin/marketplace.json "Cursor" "marketplace.json names Cursor (cross-CLI framing)"
 
 # (b) No hardcoded model versions anywhere under skills/ (drift surface — docs/MODELS.md is the single source).
-hits="$(grep -rnoE 'GPT-5\.[0-9]|Opus 4\.[0-9]|Fable [0-9]|Sonnet 4\.[0-9]|claude-opus-4-[0-9]|claude-fable-[0-9]' skills/ 2>/dev/null)"
+#     Broad — matches bare 'GPT-5'/'Opus 4' too, not just dotted minor versions.
+hits="$(grep -rnoE 'GPT-?5|Opus 4|Fable [0-9]|Sonnet 4|claude-opus|claude-fable' skills/ 2>/dev/null)"
 if [ -z "$hits" ]; then
   ok "no hardcoded model versions in skills/ (single source = docs/MODELS.md)"
 else

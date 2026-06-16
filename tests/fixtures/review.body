@@ -6,10 +6,13 @@ verdict. This is also the review that runs on a `hard` task's synthesized result
 Veto is **blockers-only**; nits are advisory. **This does not merge** — a human merges by default (AW-0003).
 
 > Reviewer models/effort are **pinned** so the review is reproducible — **current picks live in
-> `docs/MODELS.md`** (single source; this command names today's defaults inline but `MODELS.md` wins).
+> `docs/MODELS.md`** (single source; this command defers to it and names no model versions inline).
 > Run each reviewer as its **own lineage** — open a review session in Superset (or run the CLI directly) with
 > **Codex** for Reviewer A and **Claude** for Reviewer B; don't let either run as the session's default agent
-> (e.g. cursor). Each reviewer must also be **independent of the implementer's lineage**.
+> (e.g. cursor). At **`low`/`medium`** each reviewer is also **independent of the implementer's lineage**
+> (fully clean). At **`hard`**, codex authored a best-of-N attempt and ran the smart-merge — so it is
+> cross-lineage but *not* independent; the guarantee there is **≥1 structurally-clean lens** (claude, held out
+> of authoring/synthesis — AW-0004).
 
 1. **Pre-flight:** the PR's CI gate is **green** (don't pay tokens to review red code — WORKFLOW.md);
    `gh` authed; the CLIs (`claude` / `codex`) logged in on subscription. Note the PR number/URL.

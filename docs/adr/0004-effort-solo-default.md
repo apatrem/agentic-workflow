@@ -48,6 +48,11 @@
 >   author appears only inside `hard`'s best-of-N). Orchestrator, reviewers, and synthesizer are low-volume
 >   and quality-critical → premium, **reproducible** models. **Fable is no longer the default** — dropped for
 >   rate-limit fragility (a Fable reviewer stalled a PR mid-review), not to save tokens.
+>   *The deeper "why": judgment work — grilling, planning, review, synthesis — is **parametric-knowledge**
+>   (it leans on the model's trained priors and creative challenge) → premium; implementation is
+>   **contextual-knowledge** (the spec is already rich) → cheap. (External corroboration: Pocock's
+>   grill-me/grill-with-docs analysis, aihero.dev — which independently arrives at "frontier model for
+>   grilling, cheaper model for implementation.") The Phase-1 grilling/architect model row is in `docs/MODELS.md`.*
 > - **Reviewers are cross-lineage *and* independent of the implementer** (not just reviewer-vs-reviewer). With
 >   three lineages, the reviewer(s) are the lineage(s) the implementer didn't use.
 > - **`hard` guarantees ≥1 structurally-clean lens** *(added 2026-06-11; see below)* — at least one
