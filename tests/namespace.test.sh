@@ -21,11 +21,19 @@ else
   echo "$offenders" | sed 's/^/      /'
 fi
 
-# 2. The risk floor is named in the skills that enforce it (not only in the ADRs/templates).
-grep_q "skills/plan/SKILL.md" "risk floor"        "skills/plan applies the risk floor when assigning mode"
-grep_q "skills/run/SKILL.md"  "risk floor"        "skills/run enforces the risk floor before spawning"
+# 2. The risk floor is ACTIONABLE in the skills that enforce it (not only named in the ADRs/templates).
+#    Token-greps can't prove "actionable" (a word can survive in prose), but requiring the concrete action
+#    markers — the `>= medium` bump AND the `escalated by risk floor` annotation the skill must emit —
+#    makes gutting the enforcement while leaving the noun behind detectable. Semantic actionability beyond
+#    this is not mechanically checkable; that residual is accepted (codex re-verify, PR#18).
+grep_q "skills/plan/SKILL.md" "risk floor"            "skills/plan names the risk floor"
+grep_q "skills/run/SKILL.md"  "risk floor"            "skills/run names the risk floor"
+grep_q "skills/plan/SKILL.md" "escalated by risk floor" "skills/plan emits the 'escalated by risk floor' marker"
+grep_q "skills/run/SKILL.md"  "escalated by risk floor" "skills/run emits the 'escalated by risk floor' marker"
+grep_q "skills/plan/SKILL.md" "(>=|≥) ?.?medium"      "skills/plan bumps to >= medium"
+grep_q "skills/run/SKILL.md"  "medium"                "skills/run bumps to medium"
 # and it cites the canonical source by AW number
-grep_q "skills/plan/SKILL.md" "AW-0004"           "skills/plan cites AW-0004 for the floor"
-grep_q "skills/run/SKILL.md"  "AW-0004"           "skills/run cites AW-0004 for the floor"
+grep_q "skills/plan/SKILL.md" "AW-0004"               "skills/plan cites AW-0004 for the floor"
+grep_q "skills/run/SKILL.md"  "AW-0004"               "skills/run cites AW-0004 for the floor"
 
 exit $fails
