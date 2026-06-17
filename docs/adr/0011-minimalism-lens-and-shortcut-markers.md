@@ -28,6 +28,10 @@ nothing made the *acceptable* corners legible.
    Also adopted from Ponytail (2026-06-16): **"non-trivial logic leaves one runnable check"** — a coding rule
    in `AGENTS.template.md` that guards the *internals* a minimal diff is tempted to leave untested, complementing
    the frozen *acceptance* tests that guard the contract.
+   Also adopted (2026-06-17): the **edge-case tiebreaker** ("lazy means less code, not a flimsier algorithm —
+   between two same-size stdlib options take the edge-case-correct one") and the **no-prose-defense** rule
+   ("if the explanation of a simplification runs longer than the code, delete the explanation"), plus concrete
+   anti-abstraction examples — all into `AGENTS.template.md`.
 
 2. **`// SHORTCUT(<ceiling>): <upgrade path>` markers.** Each deliberate simplification is marked inline,
    naming the known ceiling **and** the upgrade path — e.g. `// SHORTCUT(O(n²) scan): ok <1k rows; add an
@@ -70,3 +74,16 @@ nothing made the *acceptable* corners legible.
   dial for two precise reasons: (a) a **naming collision** on "mode," and (b) we **deliberately fixed our
   minimalism posture** (ladder + floor, always-on, one advisory lens) rather than making it tunable — a fixed
   floor is more predictable than a per-task intensity setting.
+- **What the declined hooks actually do** (verified 2026-06-17): Ponytail's hooks are *context-injection + a
+  statusline badge*, not enforcement — a `SessionStart` hook injects the ruleset as hidden session context and
+  writes a flag file; a `UserPromptSubmit` hook tracks `/ponytail lite|full|ultra|off` and rewrites that flag; a
+  statusline script prints a `[PONYTAIL]` badge. There are **no** PreToolUse/PostToolUse hooks: they gate no
+  tools, run no linters, enforce nothing — adherence is model-compliance, exactly as with a committed rules file.
+  So declining the hooks forgoes only *ergonomics* (zero-setup auto-injection, a runtime intensity dial, a status
+  badge), not any enforcement — which makes the AW-0001 decline cleaner: we reject an out-of-repo injection
+  channel, not an enforcement mechanism we'd otherwise lack.
+- **Performance claims do not transfer to our use** (2026-06-17): Ponytail's headline numbers (80–94% less code,
+  3–6× faster, 42–75% cheaper) are *single-shot generation on Claude models only*. Upstream explicitly disclaims
+  them for agentic sessions ("a real agent session re-injects the ruleset and runs the ladder every turn, which
+  this benchmark does not measure") and reports they can reverse on non-Claude reasoning models. Our use is
+  multi-turn and cross-lineage (codex/cursor workers), so we must not claim those figures.

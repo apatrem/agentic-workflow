@@ -15,9 +15,11 @@
 - Install / dev / format: <…>
 
 ## Coding rules
-- **Smallest correct change, via the ladder:** needed at all? → stdlib → platform feature → already-installed dep → one line → minimal code. No unrequested abstractions; no new dependencies without justification.
+- **Smallest correct change, via the ladder:** needed at all? → stdlib → platform feature → already-installed dep → one line → minimal code. No unrequested abstractions (no interface with one implementation, no factory for one product, no config for a value that never changes); no new dependencies without justification.
 - **Minimalism has a floor** — never cut: input validation at trust boundaries, error handling that prevents data loss, security, accessibility. Reject invalid input; never auto-"fix" it — fail loudly.
 - **Mark deliberate corners** with `// SHORTCUT(<ceiling>): <upgrade path>` — e.g. `// SHORTCUT(O(n²) scan): ok <1k rows; add an index if it grows`. The reviewer enforces this; `grep -rn 'SHORTCUT('` is the running ledger (AW-0011).
+- **Lazy means less code, not a flimsier algorithm:** when two standard/stdlib approaches are the same size, take the one that's correct on edge cases (from Ponytail — AW-0011).
+- **Don't defend a shortcut in prose:** if the explanation of a simplification runs longer than the code, delete the explanation — a paragraph defending a corner is complexity smuggled back as prose; mark the corner with `SHORTCUT(…)` instead (from Ponytail — AW-0011).
 - Preserve public APIs / contracts unless the task explicitly allows it.
 - Add or update tests for behaviour changes.
 - **One runnable check behind non-trivial logic** (from Ponytail) — anything with branching/edge cases leaves at least one test or assertion that would fail if it broke. Frozen acceptance tests cover the *contract*; this covers the *internals* a minimal diff is tempted to leave unguarded.
