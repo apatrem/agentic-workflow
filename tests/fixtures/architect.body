@@ -9,7 +9,8 @@ Single agent + human. **Never fans out.** Produce the contracts that make Phase 
 - **Low- vs high-fidelity.** Grilling settles *low-fidelity* decisions (data shapes, trade-offs, conventions,
   interfaces). A *high-fidelity* question — UI feel, ergonomics, runtime behaviour — can't be answered by
   discussion: **spike a throwaway prototype, then grill against it.** Don't force an ADR out of a question
-  grilling can't settle.
+  grilling can't settle. *(A **spike** = a throwaway branch: no frozen tests, explore only until the question is
+  answered, then **discard the code** and carry just the answer back into the grill — never merge a spike.)*
 - **Stop when the next useful step is to build.** Over-grilling is its own over-engineering — stop when the
   design tree is resolved, or when the remaining questions need higher fidelity (prototype), then freeze tests
   and implement.
