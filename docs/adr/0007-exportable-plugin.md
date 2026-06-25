@@ -19,7 +19,7 @@
 >   decisions in its own number space**, and *references* `AW-NNNN` wherever a baseline convention applies
 >   (the way `jayson-editor/.../0023-adopt-agentic-workflow…` points at the pack). **No baseline ADR file is
 >   copied into a consuming repo.**
-> - **Each repo records a version stamp** — `agentic-workflow-baseline: <pack version>` (e.g. `v0.5.0`, from
+> - **Each repo records a version stamp** — `agentic-workflow-baseline: <pack version>` (e.g. `v0.6.0`, from
 >   the pack's `plugin.json`) in its `AGENTS.md`. It is a pack **version, not an ADR ordinal**: baseline ADRs
 >   are amended *in place* (e.g. `AW-0004` gained refinement 3 without changing its number), so a max-ordinal
 >   like "0011" can't tell "adopted before vs after that amendment," nor flag a reference to an `AW-` ADR that
