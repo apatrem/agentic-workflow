@@ -92,3 +92,25 @@ git branch -vv | awk '/: gone]/{print $1}' | xargs -r git branch -D
 `git branch -vv` marks any local branch whose upstream was deleted as `: gone]` — after a merge that is exactly the merged-and-safe-to-delete set. **This is the detection mechanism squash otherwise lacks:** `git branch --merged` relies on commit ancestry, which squash discards (the squash commit shares no SHA with the branch), so it reports merged branches as unmerged. By contrast, the *remote* deletion from auto-delete-on-merge makes each local copy self-identify as `gone` — no ancestry check, no PR-head lookup. (Without auto-delete you'd fall back to matching a branch against its merged PR via `gh pr list --state merged --json headRefName`.)
 
 Version-pinned quirks to expect (Superset v0.2.x / v1.12.x): `workspaces delete` has returned `Error: Unexpected end of JSON input` and not deleted — re-check. On **v2**, CLI-created workspaces appear in the sidebar like any other (confirmed); the old "invisible / needs Add-to-sidebar" issue was **v1-only** (`superset-sh/superset#5083`).
+
+## 8. Anti-rationalization — the excuses that skip load-bearing steps
+
+A loop running unattended still makes unattended mistakes, and the failure mode is almost never a missing
+step — it's a *rationalized* one ("it's obviously fine, skip the gate"). This table names the excuses that
+recur in this loop and the rebuttal for each, so an orchestrator can catch itself mid-justification. (Format
+borrowed from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — each enforceable step
+carries the excuse + rebuttal inline.) The rebuttal always wins; if you're saying the excuse, you're skipping
+a step.
+
+| The excuse | Why it's wrong | Step it skips |
+|---|---|---|
+| "The worker returned `ok` / said the gate passed." | `ok` proves nothing — it's a spawn return, not a result. Watch for the *artifact* (commits + quiet tree), then run the gate **yourself**. | §3 monitor / §4 verify |
+| "The diff looks fine — just push it." | Verify-before-PR is the orchestrator's gate: inspect diff scope, confirm do-not-touch/protected contracts untouched, run the full gate in the worktree. | §4 |
+| "Just push to `main` to save a PR." | The merge vehicle is **always a PR** — CI re-runs the gate in the canonical env and the PR is the human handoff (AW-0001/0003). Never `git push HEAD:main`. | merge baseline |
+| "It's a tiny/obvious change — skip review." | **Every tier runs review** — even `low` gets one adversarial reviewer on a green gate (AW-0004); "small" is not an exemption. *And* destructive-or-protected/governance surface additionally forces **≥ medium** via the risk floor, however small it looks. | review (+ risk floor) |
+| "Tests are green, so it's correct." | Green tests have repeatedly passed solo-authored governance edits that a cross-lineage lens caught as *incoherent* (real runs, AW-0004). Green is necessary, not sufficient. | review |
+| "One reviewer already approved — skip the second lens." | `medium`/`hard` require **two cross-lineage** lenses; a finding reproduced by exactly one lens is still a blocker (§6). | dual review |
+| "Remediation ballooned past the punch-list, but it's all good." | A ballooned fix is an **escalation trigger** (→ full re-review, one tier up), not a footnote — report it (AW-0010). | §6 escalation |
+| "Re-spawn keeps failing — I'll just fix it inline." | The orchestrator **never implements inline** (context-rot, §1). Re-spawn the implementer, or run the **implementer CLI directly in the worktree** (the §5 direct-CLI pattern is reviewer-only — for an implementer, run it the same way but let it commit, don't pull the work into the orchestrator thread); persistent failure → `needs-human` (AW-0006). | thin orchestrator |
+| "Round 3 didn't clear it, but I'm close — one more round." | The cap is **3 review rounds** (AW-0010) → then **`needs-human`** (AW-0006). Hand the PR over with the open blockers flagged; don't auto-loop past the budget. | round cap |
+| "Skip cleanup — stale branches are harmless." | Prune after merge or the worktree/branch set rots; the `: gone]` detection only works if you run it (§7). | §7 cleanup |

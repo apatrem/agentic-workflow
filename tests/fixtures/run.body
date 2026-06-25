@@ -10,7 +10,8 @@ worker runs the chosen model in its own git worktree. **A human merges** by defa
 > spawn, per tier), **not** the engine's API — external (AW-0002 / 0007) and versioned. Commands below verified
 > against **superset v0.2.19** — re-check on upgrade. The end-to-end operational loop an orchestrator actually
 > runs — wrapped prompts, monitoring, verify-before-PR, the remediation→re-verify cycle, cleanup, and
-> spawn-reliability fallbacks — is in **`docs/ORCHESTRATOR_PLAYBOOK.md`**.
+> spawn-reliability fallbacks, and the **anti-rationalization table** (§8 — the excuses that skip the gate /
+verify / review / cleanup, and the rebuttals) — is in **`docs/ORCHESTRATOR_PLAYBOOK.md`**.
 
 1. **Pre-flight:** `main` clean + protected; the agent CLIs (`claude` / `codex` / `cursor-agent`) logged in on
    your subscription **and each engine preset set to run non-interactively** — a preset is a stored command
