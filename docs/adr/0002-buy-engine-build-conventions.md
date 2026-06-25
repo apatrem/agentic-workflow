@@ -63,7 +63,8 @@ one-line, swappable detail.
   remains is ADR-0008's own code-side decision + `gh` merge. (An earlier draft wrongly called an interactive
   engine a dead-end here.)
 - **Fallbacks (one-line swap):** **Claude Squad** (minimal TUI, more battle-tested); **Sculptor**
-  (Docker-container isolation, stronger than worktrees — ADR-0006).
+  (Docker-container isolation, stronger than worktrees — ADR-0006); **herdr** (open, cross-platform,
+  fully headless — evaluated in the Update below).
 
 ## Update (2026-06) — Cursor Composer is the default solo implementer
 
@@ -74,3 +75,42 @@ worker on lineage **cursor**, routine ~90% path. Rationale: reliable enough in p
 toward small, surgical diffs matches the reward function — *"reward the smallest passing diff, not
 cleverness."* `claude` and `codex` remain first-class overrides for competitive best-of-N (`templates/ROLES.md`);
 graceful degradation on worker error is unchanged.
+
+## Update (2026-06) — [herdr](https://github.com/ogulcancelik/herdr) flagged as a candidate engine (evaluated, not adopted)
+
+A potential replacement for Superset, recorded here so the comparison isn't lost. **Not adopted — Superset
+remains the current pick.** herdr ([herdr.dev](https://herdr.dev)) is a Rust single-binary terminal session
+manager for coding agents. It maps cleanly onto the **seven-operation engine contract** this ADR demands
+(register repo → project; per-task isolated worktree on a named branch; spawn agent into worktree via the
+CLI's auto-approve flag, multi-lineage; run a gate command in a worktree; monitor status + diff; capture the
+transcript; tear down after merge), so the swap is **roughly the same effort as the Composio → Superset move
+— a half-day `medium` PR**.
+
+**Pros**
+- **Open + cross-platform** — AGPL-3.0 (or commercial), Linux/macOS (Windows beta). Removes Superset's two
+  standing caveats: **ELv2 source-available** and **macOS-only**.
+- **Fully headless** — server + complete CLI + JSON socket API; **native** `herdr worktree create/open/list/remove`
+  (don't rebuild these — AW-0002). Multi-CLI first-class (claude/codex/cursor). Remote-over-SSH.
+- **Semantic states** — `herdr wait output|agent-status` exposes done/blocked, so the monitor loop
+  (ORCHESTRATOR_PLAYBOOK §3) needs no PTY heuristics to know a worker finished.
+
+**Cons / watch-outs**
+- **Pre-1.0 (v0.7.0)** — less battle-tested than a shipping app.
+- **No GUI.** Terminal-native: **no visual diff preview, no clickable PR-merge buttons.** These are Superset
+  *conveniences*, not contract functions — diff review already has a CLI path (`git diff` / `gh pr diff` /
+  open the worktree in your editor, per the `run` skill), and **a human merges on GitHub** (`gh pr merge` /
+  web UI), which is never an engine function (AW-0003). So it's a real **ergonomics downgrade** for the human
+  review/merge step, not a functional blocker — and the engine choice doesn't lock the review surface (you can
+  run herdr headless and still review/merge on github.com).
+- **No preset abstraction** — you assemble argv + the auto-approve flag yourself. Glue needed: a **~20-line
+  spawn wrapper** encoding lineage → argv + flag (cursor `--force`, claude `--dangerously-skip-permissions`,
+  codex `--dangerously-bypass-approvals-and-sandbox`), replacing `templates/superset-config.template.json`'s
+  preset store.
+- **Transcript capture is PTY-buffer scraping** (`herdr pane read --source recent-unwrapped`), not a transcript
+  file — coarser than Superset's capture.
+- **Compact pane/agent ids are reused on close** — re-list, don't cache.
+
+**If adopted:** amend this ADR in place (don't supersede), rewrite the spawn/gate/cleanup snippets in
+`skills/run/SKILL.md` + `ORCHESTRATOR_PLAYBOOK.md`, replace the Superset config template with the lineage→argv
+table + spawn wrapper. The backbone (ADR-0001) and all conventions are unaffected — that's the point of the
+swappable-slot principle.
