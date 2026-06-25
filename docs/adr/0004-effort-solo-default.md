@@ -84,6 +84,27 @@ task, keep the best). Heterogeneity only pays when approaches diverge — i.e. c
 run confirmed the three produce meaningfully different solutions (one won on rigor, another on API
 design, another on size). But running N agents on *every* task costs ~N× and is wasted on routine work.
 
+**External evidence for the design (directional, not load-bearing).** Merouani et al., *Agentic
+Auto-Scheduling: An Experimental Study of LLM-Guided Loop Optimization* (COMPILOT, PACT 2025;
+[arXiv:2511.00592](https://arxiv.org/abs/2511.00592)) ran off-the-shelf LLMs in a closed loop with a compiler
+and independently lands on three things this ADR (and AW-0001/0010) already bet on:
+- **best-of-N beats single-run** — geomean speedup **3.54× at best-of-5 vs 2.66× single-run** — the empirical
+  shape of `hard`'s competitive best-of-N: independent attempts diverge, and keeping the best wins.
+- **no single lineage dominated** — across eight models the top performers were close, **reasoning- and
+  coding-specialized models did *not* consistently win**, and per-model failure distributions differed widely
+  — i.e. diversity is the lever, not one "best" model. Corroborates reviewers being **cross-lineage** (the
+  clean-lens invariant below) over betting on a single line.
+- **the verifier carries the loop** — only **~36% of LLM proposals were runnable** (~31% invalid, ~33%
+  illegal); the loop worked *because the compiler's legality check caught the other two-thirds*. The model
+  proposes; a deterministic checker decides — exactly *"LLMs propose, tools verify"* (AW-0001) and why review
+  is blockers-gated on a green gate, never a substitute for it. (Their RQ10 also found an **analyze-before-
+  acting** step measurably helped — our plan-/grill-before-code, AW-0005.)
+
+**Caveat — read the *direction*, not the magnitudes.** It's a different domain (compiler loop scheduling, not
+software change authoring) and the study used **2024-era models** (gemini-2.0-flash, gpt-4o, o3-mini,
+llama3.3, qwen2.5-coder, codestral). The absolute numbers are dated and don't transfer; the **qualitative
+findings** — best-of-N > single, lineage diversity, verifier-carries-the-loop — are what corroborate the design.
+
 The original dial had two points (`solo | competitive`). In practice there is a useful middle: keep a
 single implementer, but spend extra **review** assurance on a change that is risky but not worth a
 full competitive author-off. So the dial really moves **two axes at once** — *authoring depth* (how

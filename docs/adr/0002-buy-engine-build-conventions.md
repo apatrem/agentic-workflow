@@ -76,6 +76,31 @@ toward small, surgical diffs matches the reward function — *"reward the smalle
 cleverness."* `claude` and `codex` remain first-class overrides for competitive best-of-N (`templates/ROLES.md`);
 graceful degradation on worker error is unchanged.
 
+## Update (2026-06) — scheduled automations: an allowed *trigger* for the loop, under the same policy
+
+The loop is human-*initiated* today (a human runs `/agentic-workflow:run`). The engine also lets a loop
+**trigger itself on a schedule** — Superset ships automations/scheduling; herdr and cron do too — so an agent
+can run unattended discovery/triage on a cadence (nightly "find flaky tests", "triage new issues",
+"flag dependency drift") and surface work nobody asked for yet. This idea is borrowed from Addy Osmani's
+*Loop Engineering* (the "Automations" primitive). **It changes only *who starts the loop*, not what the loop
+is** — so it inherits every existing guarantee rather than earning an exception:
+
+- **A scheduled run is still just a `/run`** — same worktree-per-worker, same deterministic gate, same
+  verify-before-PR. Its output is a **PR a human merges** (AW-0003 / 0006); a schedule **never** grants
+  auto-merge (that's the separate, earned ADR-0008 tier).
+- **The risk floor applies unchanged** (AW-0004): a scheduled job that touches destructive-or-protected or
+  governance surface runs at **≥ medium** with the cross-lineage review, exactly as a hand-started one would.
+  The schedule does not lower scrutiny.
+- **The orchestrator stays thin** (ORCHESTRATOR_PLAYBOOK §1): a scheduled job spawns workers and opens PRs; it
+  does not accumulate context or merge. Discovery/triage that finds *nothing* should cost ~nothing and open no PR.
+- **"Stay the engineer"** — Osmani's own caveat: an unattended loop still makes unattended mistakes, and
+  unread generated code is *comprehension debt*. Automations surface and prepare work; a human still reads the
+  diff and merges. They are a convenience for *initiating* the loop, not a licence to leave it.
+
+Net: automations are **permitted and engine-provided, governed by the existing ADRs** — no new merge authority,
+no new risk-floor exemption. Worth adopting when a repo has recurring unprompted work (triage, drift, flakiness);
+skip until it does (the minimalism tier ladder — `docs/WORKFLOW.md`).
+
 ## Update (2026-06) — [herdr](https://github.com/ogulcancelik/herdr) flagged as a candidate engine (evaluated, not adopted)
 
 A potential replacement for Superset, recorded here so the comparison isn't lost. **Not adopted — Superset
