@@ -90,20 +90,26 @@ Auto-Scheduling: An Experimental Study of LLM-Guided Loop Optimization* (COMPILO
 and independently lands on three things this ADR (and AW-0001/0010) already bet on:
 - **best-of-N beats single-run** — geomean speedup **3.54× at best-of-5 vs 2.66× single-run** — the empirical
   shape of `hard`'s competitive best-of-N: independent attempts diverge, and keeping the best wins.
-- **no single lineage dominated** — across eight models the top performers were close, **reasoning- and
-  coding-specialized models did *not* consistently win**, and per-model failure distributions differed widely
-  — i.e. diversity is the lever, not one "best" model. Corroborates reviewers being **cross-lineage** (the
-  clean-lens invariant below) over betting on a single line.
-- **the verifier carries the loop** — only **~36% of LLM proposals were runnable** (~31% invalid, ~33%
-  illegal); the loop worked *because the compiler's legality check caught the other two-thirds*. The model
-  proposes; a deterministic checker decides — exactly *"LLMs propose, tools verify"* (AW-0001) and why review
-  is blockers-gated on a green gate, never a substitute for it. (Their RQ10 also found an **analyze-before-
-  acting** step measurably helped — our plan-/grill-before-code, AW-0005.)
+- **model choice materially affects outcomes** — across **eight** models the top performers were close,
+  **reasoning- and coding-specialized models did *not* consistently win**, and per-model failure distributions
+  differed widely (runnable-proposal rates spanned ~15%–40%). The paper studies *which single model* you pick,
+  not *mixing* models — so this is direct evidence that the model matters, and only an **analogy** (ours, not
+  the paper's) for why we run reviewers **cross-lineage**: the paper never tested mixed- vs same-lineage
+  best-of-N or anything about review.
+- **the verifier carries the loop** — for the primary model (gemini-2.0-flash) only **~36% of proposals were
+  runnable** (~31% invalid, ~33% illegal; other models ranged lower, e.g. codestral ~15% runnable). The loop
+  worked *because a deterministic two-stage check caught the rest* — a compiler-independent **response parser**
+  rejects invalid proposals, the **compiler's legality check** rejects illegal ones. The model proposes; the
+  tooling decides — exactly *"LLMs propose, tools verify"* (AW-0001) and why review is blockers-gated on a
+  green gate, never a substitute for it. (Their RQ10 also found an **analyze-before-acting** step measurably
+  helped — our plan-/grill-before-code, AW-0005.)
 
 **Caveat — read the *direction*, not the magnitudes.** It's a different domain (compiler loop scheduling, not
-software change authoring) and the study used **2024-era models** (gemini-2.0-flash, gpt-4o, o3-mini,
-llama3.3, qwen2.5-coder, codestral). The absolute numbers are dated and don't transfer; the **qualitative
-findings** — best-of-N > single, lineage diversity, verifier-carries-the-loop — are what corroborate the design.
+software change authoring) and the study used **2024–early-2025 models** (gemini-2.0-flash, gemma3, gpt-4o,
+llama3.3, o3-mini, qwq, qwen2.5-coder, codestral-2501 — several released early 2025). The absolute numbers are
+already stale relative to 2026 and don't transfer; the **qualitative findings** — best-of-N > single,
+model-choice-matters, verifier-carries-the-loop — are what corroborate the design. The cross-lineage-reviewer
+link is our inference, not a result the paper reports.
 
 The original dial had two points (`solo | competitive`). In practice there is a useful middle: keep a
 single implementer, but spend extra **review** assurance on a change that is risky but not worth a
