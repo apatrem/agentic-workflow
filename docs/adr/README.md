@@ -5,7 +5,7 @@ The durable decision record for this plugin. Read top to bottom — each is self
 > **These are the baseline — cite them `AW-NNNN` outside this repo** (e.g. `AW-0010` = remediation loop).
 > Consuming repos adopt them **by reference, not by copy**: keep your own `docs/adr/` for domain decisions
 > in your own number space, reference `AW-NNNN` where a baseline convention applies, and record
-> `agentic-workflow-baseline: <pack version, e.g. v0.6.0>` (from `plugin.json` — a version, not an ADR
+> `agentic-workflow-baseline: <pack version, e.g. v0.6.1>` (from `plugin.json` — a version, not an ADR
 > ordinal, since baseline ADRs are amended in place) in your `AGENTS.md`. Never copy a baseline ADR file
 > into a consuming repo (it drifts and burns your number space). Rationale: **AW-0007**.
 
