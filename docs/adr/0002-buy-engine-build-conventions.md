@@ -104,6 +104,15 @@ every existing guarantee rather than earning an exception:
 - **The orchestrator stays thin** (ORCHESTRATOR_PLAYBOOK §1): a scheduled job spawns workers and opens PRs (or
   files triage artifacts); it does not accumulate context or merge. A run that finds *nothing* should cost
   ~nothing and open no PR.
+- **Loop memory is the repo, not a sidecar state file.** Osmani names a *sixth* element beyond his five — a
+  "memory" (a markdown file / Linear board) holding *done / next / tried* across runs, because the model
+  forgets between runs. The need is real for a loop; the *mechanism* isn't new for us. That memory already
+  lives in **git + GitHub + `tasks/`**: *done* = commits / merged PRs / closed issues; *next* = open issues /
+  open `tasks/*.md` / the triage inbox; and *tried-and-abandoned* = **closed PRs** (`gh pr list --state
+  closed`) plus anything routed to **`needs-human`** (AW-0006 / 0010) — so a loop doesn't re-walk yesterday's
+  dead ends. We therefore keep the **`STATE.md` decline** (AW-0001): a sidecar state file duplicates git and
+  drifts. *"The agent forgets, the repo doesn't"* is more true with the repo as memory than with a hand-kept
+  markdown file as one.
 - **"Stay the engineer"** — Osmani's own caveat: an unattended loop still makes unattended mistakes, and
   unread generated code is *comprehension debt*. Automations surface and prepare work; a human still reads the
   diff and merges. They are a convenience for *initiating* the loop, not a licence to leave it.
