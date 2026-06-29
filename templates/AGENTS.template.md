@@ -1,6 +1,6 @@
 # AGENTS.md — <project>
 
-<!-- agentic-workflow-baseline: <pack version this repo is pinned to, e.g. v0.6.0 — from the pack's plugin.json> -->
+<!-- agentic-workflow-baseline: <pack version this repo is pinned to, e.g. v0.6.1 — from the pack's plugin.json> -->
 <!-- Baseline conventions are adopted BY REFERENCE: cite them `AW-NNNN` (AW-0007); this repo's own
      docs/adr/ is for domain decisions in its own number space. Never copy a baseline ADR file in.
      The stamp is a pack VERSION, not an ADR ordinal — baseline ADRs are amended in place, so only a
